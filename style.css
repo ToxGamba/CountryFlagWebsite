@@ -1,21 +1,29 @@
-/* General Styles */
-body {
-  font-family: Arial, sans-serif;
+/* General reset */
+* {
   margin: 0;
   padding: 0;
-  background: #f4f4f9;
-  color: #333;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
 
+/* Body */
+body {
+  background-color: #f7f7f7;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Header */
 header {
   background-color: #4CAF50;
   color: white;
-  padding: 1rem;
   text-align: center;
+  padding: 1rem 0;
   font-size: 2rem;
   font-weight: bold;
 }
 
+/* Navigation */
 nav {
   background-color: #333;
   display: flex;
@@ -24,55 +32,61 @@ nav {
 
 nav a {
   color: white;
-  padding: 0.75rem 1.5rem;
+  padding: 1rem 2rem;
   text-decoration: none;
   transition: background 0.3s;
 }
 
 nav a:hover {
-  background-color: #555;
+  background-color: #575757;
 }
 
-/* Main Layout */
+/* Main container */
 .main-container {
   display: flex;
-  margin: 1rem;
-  gap: 1rem;
+  justify-content: space-between;
+  padding: 2rem;
+  gap: 2rem;
 }
 
-.content {
-  flex: 3;
-  padding: 1rem;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
+/* Side ads */
 .side-ad {
-  flex: 1;
-  padding: 1rem;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  min-width: 200px;
+  width: 20%;
 }
 
-/* Inputs and Buttons */
-input[type="text"] {
-  padding: 0.5rem;
-  margin: 0.25rem 0;
-  width: 80%;
+/* Content */
+.content {
+  width: 60%;
+  background-color: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Country block */
+.country {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 1px solid #ddd;
+  padding: 1rem 0;
+}
+
+.country img.flag {
+  width: 60px;
+  height: auto;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
 
+/* Buttons */
 button {
-  padding: 0.5rem 1rem;
-  margin: 0.25rem 0.25rem 0.25rem 0;
-  border: none;
-  border-radius: 5px;
   background-color: #4CAF50;
+  border: none;
   color: white;
+  padding: 0.5rem 1rem;
+  margin: 0.5rem 0;
+  border-radius: 5px;
   cursor: pointer;
   transition: background 0.3s;
 }
@@ -81,61 +95,43 @@ button:hover {
   background-color: #45a049;
 }
 
-/* Country Cards */
-.country {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin: 0.5rem 0;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #fafafa;
-  transition: transform 0.2s;
-}
-
-.country:hover {
-  transform: scale(1.02);
-}
-
-.country img.flag {
-  width: 80px;
-  height: 50px;
-  object-fit: cover;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-/* Like Button */
+/* Like button inside country block */
 .like-btn {
   margin-left: auto;
-  background-color: #008CBA;
 }
 
-.like-btn:hover {
-  background-color: #0079a1;
+/* Pending submissions & leaderboard */
+.pending-entry, #leaderboard p, #top-facts p {
+  border-bottom: 1px solid #ddd;
+  padding: 0.5rem 0;
 }
 
-/* Pending submissions */
-#pending-submissions .pending-entry {
+/* Input fields */
+input[type="text"] {
   padding: 0.5rem;
+  width: 100%;
   margin: 0.5rem 0;
-  border: 1px dashed #999;
   border-radius: 5px;
-  background-color: #fffbe6;
-}
-
-/* Top lists & leaderboard */
-#leaderboard p, #top-facts p {
-  margin: 0.25rem 0;
+  border: 1px solid #ccc;
 }
 
 /* Responsive */
-@media (max-width: 900px) {
+@media screen and (max-width: 900px) {
   .main-container {
     flex-direction: column;
+    padding: 1rem;
   }
-  .side-ad {
-    min-width: auto;
+
+  .side-ad, .content {
+    width: 100%;
+  }
+
+  nav {
+    flex-direction: column;
+  }
+
+  nav a {
+    text-align: center;
+    padding: 0.5rem 0;
   }
 }
