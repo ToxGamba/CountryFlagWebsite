@@ -5,15 +5,34 @@
   <title>All Countries - Country Facts</title>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
-
-  <!-- AdSense verification code -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9710772776347990"
-     crossorigin="anonymous"></script>
+  <style>
+    /* Likes button styles */
+    .like-btn {
+      cursor: pointer;
+      padding: 4px 8px;
+      margin-right: 5px;
+      border: none;
+      background-color: #007BFF;
+      color: white;
+      border-radius: 5px;
+    }
+    .like-count {
+      font-weight: bold;
+    }
+    .country {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+    .flag {
+      width: 80px;
+      height: auto;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    Country Facts 🌍
-  </header>
+  <header>Country Facts 🌍</header>
 
   <nav>
     <a href="index.html">Home</a>
@@ -24,14 +43,16 @@
 
     <!-- Left Side Ad -->
     <div class="side-ad">
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9710772776347990"
+     crossorigin="anonymous"></script>
       <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-9710772776347990"
-           data-ad-slot="4507655711"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
+         style="display:block"
+         data-ad-client="ca-pub-9710772776347990"
+         data-ad-slot="4507655711"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
       <script>
-           (adsbygoogle = window.adsbygoogle || []).push({});
+         (adsbygoogle = window.adsbygoogle || []).push({});
       </script>
     </div>
 
@@ -42,7 +63,6 @@
 
       <input type="text" id="search" placeholder="Search for a country..." />
       <button id="random-btn">Show Random Fact</button>
-
       <div id="country-list"></div>
       <p id="no-results" style="display:none;">No results found.</p>
 
@@ -52,32 +72,28 @@
       <button id="submit-fact">Submit</button>
       <p id="thankyou" style="display:none; color:green;">Thank you! Your submission has been recorded.</p>
 
-      <h2>Pending Submissions (Approve Here)</h2>
-      <div id="pending-submissions">
-        <p>Loading pending submissions...</p>
-      </div>
+      <h2>Pending Submissions (Admin Only)</h2>
+      <div id="pending-submissions"><p>Loading pending submissions...</p></div>
 
       <h2>Submission Leaderboard (Admin Only)</h2>
-      <div id="leaderboard">
-        <p>Loading submissions...</p>
-      </div>
+      <div id="leaderboard"><p>Loading submissions...</p></div>
 
       <h2>Top Contributed Countries</h2>
-      <div id="top-facts">
-        <p>Loading top countries...</p>
-      </div>
+      <div id="top-facts"><p>Loading top countries...</p></div>
     </div>
 
     <!-- Right Side Ad -->
     <div class="side-ad">
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9710772776347990"
+     crossorigin="anonymous"></script>
       <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-9710772776347990"
-           data-ad-slot="4507655711"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
+         style="display:block"
+         data-ad-client="ca-pub-9710772776347990"
+         data-ad-slot="4507655711"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
       <script>
-           (adsbygoogle = window.adsbygoogle || []).push({});
+         (adsbygoogle = window.adsbygoogle || []).push({});
       </script>
     </div>
 
@@ -88,7 +104,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
   <script>
-    // Firebase config - replace with your values
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
       authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
@@ -111,7 +126,7 @@
       const country = countryInput.value.trim();
       const fact = factInput.value.trim();
       if (!country && !fact) return alert("Please enter a country or a fact.");
-      const newSubmission = {country: country || null, fact: fact || null, timestamp: Date.now(), approved: false};
+      const newSubmission = {country: country || null, fact: fact || null, timestamp: Date.now(), approved: false, likes:0};
       db.ref("submissions").push(newSubmission).then(() => {
         countryInput.value = ""; factInput.value = "";
         thankyou.style.display = "block";
@@ -182,24 +197,42 @@
     }
     loadTopFacts();
 
-    // Display approved countries
+    // Display approved countries with Like button
     const countryListDiv=document.getElementById("country-list");
     function loadCountries(){
       db.ref("submissions").orderByChild("approved").equalTo(true).once("value").then(snapshot=>{
         const approved=snapshot.val();
         if(!approved) return;
-        Object.values(approved).forEach(entry=>{
-          const countryName=entry.country;
-          const fact=entry.fact;
-          fetch(`https://restcountries.com/v3.1/name/${countryName}?fullText=true`).then(res=>res.json())
-            .then(data=>{
-              const flagURL=data[0].flags.png;
-              const div=document.createElement("div");
-              div.className="country";
-              div.innerHTML=`<img src="${flagURL}" alt="${countryName} Flag" class="flag">
-                             <h2>${countryName}</h2><p>${fact}</p>`;
+        Object.entries(approved).forEach(([id, entry])=>{
+          const countryName = entry.country;
+          const fact = entry.fact;
+
+          fetch(`https://restcountries.com/v3.1/name/${countryName}?fullText=true`)
+            .then(res => res.json())
+            .then(data => {
+              const flagURL = data[0].flags.png;
+              const div = document.createElement("div");
+              div.className = "country";
+              div.innerHTML = `
+                <img src="${flagURL}" alt="${countryName} Flag" class="flag">
+                <h2>${countryName}</h2>
+                <p>${fact}</p>
+                <button class="like-btn">👍 Like</button>
+                <span class="like-count">${entry.likes || 0}</span>
+              `;
               countryListDiv.appendChild(div);
-            }).catch(err=>console.log("Error fetching flag:",err));
+
+              // Like button logic
+              const likeBtn = div.querySelector(".like-btn");
+              const likeCount = div.querySelector(".like-count");
+
+              likeBtn.addEventListener("click", () => {
+                const newLikes = (entry.likes || 0) + 1;
+                db.ref(`submissions/${id}`).update({ likes: newLikes });
+                entry.likes = newLikes;
+                likeCount.innerText = newLikes;
+              });
+            }).catch(err => console.log("Error fetching flag:", err));
         });
       });
     }
