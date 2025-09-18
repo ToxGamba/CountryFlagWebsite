@@ -5,10 +5,6 @@
   <title>All Countries - Country Facts</title>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
-
-  <!-- AdSense script placeholder -->
-  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=YOUR_CLIENT_ID" crossorigin="anonymous"></script> -->
-
 </head>
 <body>
   <header>Country Facts 🌍</header>
@@ -54,7 +50,6 @@
     </div>
   </div>
 
-  <!-- Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
     import { getDatabase, ref, push, onValue, update, runTransaction, query, orderByChild, equalTo, limitToLast } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
@@ -96,7 +91,7 @@
       });
     });
 
-    // Load pending submissions
+    // Pending submissions with Approve/Disapprove
     const pendingDiv = document.getElementById("pending-submissions");
     function loadPending() {
       const pendingQuery = query(ref(db, "submissions"), orderByChild("approved"), equalTo(false));
@@ -108,10 +103,16 @@
           const div = document.createElement("div");
           div.className = "pending-entry";
           div.innerHTML = `<p><strong>${entry.country||"No Country"}</strong> - ${entry.fact||"No Fact"}</p>
-                           <button data-id="${id}">Approve</button>`;
+                           <button class="approve-btn" data-id="${id}">Approve</button>
+                           <button class="disapprove-btn" data-id="${id}">Disapprove</button>`;
           pendingDiv.appendChild(div);
-          div.querySelector("button").addEventListener("click", () => {
+
+          div.querySelector(".approve-btn").addEventListener("click", () => {
             update(ref(db, "submissions/"+id), {approved:true});
+          });
+          div.querySelector(".disapprove-btn").addEventListener("click", () => {
+            // Remove submission entirely
+            update(ref(db, "submissions/"+id), {approved:"disapproved"});
           });
         });
       });
@@ -136,7 +137,7 @@
     }
     loadLeaderboard();
 
-    // Top Contributed Countries
+    // Top contributed countries
     const topFactsDiv = document.getElementById("top-facts");
     function loadTopFacts() {
       onValue(ref(db, "submissions"), snapshot => {
@@ -145,7 +146,7 @@
         if (!submissions) { topFactsDiv.innerHTML = "<p>No submissions yet.</p>"; return; }
         const countryLikes = {};
         Object.values(submissions).forEach(entry => {
-          if (!entry.country || !entry.approved) return;
+          if (!entry.country || entry.approved !== true) return;
           countryLikes[entry.country] = Math.max(entry.likes || 0, countryLikes[entry.country] || 0);
         });
         Object.entries(countryLikes).sort((a,b)=>b[1]-a[1]).forEach(([country, likes]) => {
@@ -157,7 +158,7 @@
     }
     loadTopFacts();
 
-    // Load approved countries with flags and likes
+    // Approved countries with flags & like buttons
     const countryListDiv = document.getElementById("country-list");
     function loadCountries() {
       const approvedQuery = query(ref(db, "submissions"), orderByChild("approved"), equalTo(true));
@@ -180,8 +181,6 @@
               <button class="like-btn" data-id="${id}">👍 Like (<span class="like-count">${entry.likes||0}</span>)</button>
             `;
             countryListDiv.appendChild(div);
-
-            // Like button
             div.querySelector(".like-btn").addEventListener("click", ()=>{
               const likeRef = ref(db, "submissions/"+id+"/likes");
               runTransaction(likeRef, current => (current||0)+1);
@@ -213,15 +212,4 @@
     // Random fact
     const randomBtn = document.getElementById("random-btn");
     randomBtn.addEventListener("click", ()=>{
-      const countryDivs = document.getElementsByClassName("country");
-      const visible = [];
-      for (let i=0;i<countryDivs.length;i++) if(countryDivs[i].style.display!=="none") visible.push(countryDivs[i]);
-      if(visible.length===0) return;
-      for (let i=0;i<countryDivs.length;i++) countryDivs[i].style.display="none";
-      const idx = Math.floor(Math.random()*visible.length);
-      visible[idx].style.display="";
-    });
-
-  </script>
-</body>
-</html>
+      const countryDivs = document.get
