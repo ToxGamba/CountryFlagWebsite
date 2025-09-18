@@ -3,7 +3,11 @@ header { background:#4CAF50; color:white; padding:15px; font-size:1.5em; text-al
 nav { background:#333; overflow:hidden; }
 nav a { float:left; display:block; color:white; text-align:center; padding:14px 16px; text-decoration:none; }
 nav a:hover { background:#ddd; color:black; }
-main { padding:20px; max-width:800px; margin:auto; }
+
+.main-container { display:flex; justify-content:center; padding:20px; }
+.content { max-width:800px; margin:0 20px; }
+.side-ad { width:160px; margin:0 10px; text-align:center; }
+
 #search { width:100%; padding:10px; margin-bottom:15px; font-size:1em; }
 #random-btn, #submit-fact { padding:10px 15px; margin:10px 0; cursor:pointer; }
 .country, .pending-entry { background:white; padding:15px; margin-bottom:10px; border-radius:5px; box-shadow:0 2px 5px rgba(0,0,0,0.1); display:flex; align-items:center; }
