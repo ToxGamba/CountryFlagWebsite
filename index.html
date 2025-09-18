@@ -43,6 +43,10 @@
       <input type="text" id="user-fact" placeholder="Your Fact">
       <button id="submit-fact">Submit</button>
       <p id="thankyou" style="display:none; color:green;">Thank you! Your submission has been recorded.</p>
+
+      <!-- Admin Panel -->
+      <h2>Pending Submissions (Admin)</h2>
+      <div id="pending-submissions"><p>Loading pending submissions...</p></div>
     </div>
 
     <!-- Right Side Ad -->
@@ -62,7 +66,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
   <script>
-    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyC8X4vku5TqaD_toaNNbBaX46yxHjCYSd8",
       authDomain: "countryflagwebsite.firebaseapp.com",
@@ -73,7 +76,6 @@
       appId: "1:1019419410071:web:9362a50598211638caf3d2"
     };
 
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
@@ -167,6 +169,36 @@
         setTimeout(() => thankyou.style.display = "none", 3000);
       });
     });
+
+    // Admin: load pending submissions
+    const pendingDiv = document.getElementById("pending-submissions");
+    function loadPending() {
+      db.ref("submissions").orderByChild("approved").equalTo(false).on("value", snapshot => {
+        const submissions = snapshot.val();
+        pendingDiv.innerHTML = "";
+        if(!submissions){ pendingDiv.innerHTML = "<p>No pending submissions.</p>"; return; }
+
+        Object.entries(submissions).forEach(([id, entry]) => {
+          const div = document.createElement("div");
+          div.className = "pending-entry";
+          div.innerHTML = `
+            <p><strong>${entry.country||"No Country"}</strong> - ${entry.fact||"No Fact"}</p>
+            <button class="approve-btn" data-id="${id}">Approve</button>
+            <button class="disapprove-btn" data-id="${id}">Disapprove</button>
+          `;
+          pendingDiv.appendChild(div);
+
+          div.querySelector(".approve-btn").addEventListener("click", () => {
+            db.ref("submissions/" + id).update({approved:true});
+          });
+
+          div.querySelector(".disapprove-btn").addEventListener("click", () => {
+            db.ref("submissions/" + id).remove();
+          });
+        });
+      });
+    }
+    loadPending();
   </script>
 </body>
 </html>
