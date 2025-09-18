@@ -36,6 +36,7 @@
       text-align: center;
       padding: 10px;
       transition: transform 0.2s;
+      cursor: pointer;
     }
     .country:hover {
       transform: scale(1.05);
@@ -50,6 +51,42 @@
       margin-top: 8px;
       font-weight: bold;
     }
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.6);
+    }
+    .modal-content {
+      background-color: white;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+      text-align: left;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .close:hover {
+      color: black;
+    }
+    .fact {
+      margin-bottom: 10px;
+      padding: 8px;
+      background: #f7f7f7;
+      border-radius: 5px;
+    }
   </style>
 </head>
 <body>
@@ -58,19 +95,30 @@
 
   <div class="countries" id="countries-container"></div>
 
+  <!-- Modal -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2 id="modal-country-name"></h2>
+      <div id="facts-list">
+        <p>No facts yet.</p>
+      </div>
+    </div>
+  </div>
+
   <script>
     const countries = [
-      { name: "Afghanistan", flag: "https://flagcdn.com/af.svg" },
-      { name: "Albania", flag: "https://flagcdn.com/al.svg" },
-      { name: "Algeria", flag: "https://flagcdn.com/dz.svg" },
-      { name: "Andorra", flag: "https://flagcdn.com/ad.svg" },
-      { name: "Angola", flag: "https://flagcdn.com/ao.svg" },
-      { name: "Antigua and Barbuda", flag: "https://flagcdn.com/ag.svg" },
-      { name: "Argentina", flag: "https://flagcdn.com/ar.svg" },
-      { name: "Armenia", flag: "https://flagcdn.com/am.svg" },
-      { name: "Australia", flag: "https://flagcdn.com/au.svg" },
-      { name: "Austria", flag: "https://flagcdn.com/at.svg" },
-      { name: "Azerbaijan", flag: "https://flagcdn.com/az.svg" },
+      { name: "Afghanistan", flag: "https://flagcdn.com/af.svg", facts: [] },
+      { name: "Albania", flag: "https://flagcdn.com/al.svg", facts: [] },
+      { name: "Algeria", flag: "https://flagcdn.com/dz.svg", facts: [] },
+      { name: "Andorra", flag: "https://flagcdn.com/ad.svg", facts: [] },
+      { name: "Angola", flag: "https://flagcdn.com/ao.svg", facts: [] },
+      { name: "Argentina", flag: "https://flagcdn.com/ar.svg", facts: [] },
+      { name: "Armenia", flag: "https://flagcdn.com/am.svg", facts: [] },
+      { name: "Australia", flag: "https://flagcdn.com/au.svg", facts: [] },
+      { name: "Austria", flag: "https://flagcdn.com/at.svg", facts: [] },
+      { name: "Azerbaijan", flag: "https://flagcdn.com/az.svg", facts: [] },
+      { name: "Zimbabwe", flag: "https://flagcdn.com/zw.svg", facts: [] }
       { name: "Bahamas", flag: "https://flagcdn.com/bs.svg" },
       { name: "Bahrain", flag: "https://flagcdn.com/bh.svg" },
       { name: "Bangladesh", flag: "https://flagcdn.com/bd.svg" },
@@ -253,11 +301,15 @@
       { name: "Vietnam", flag: "https://flagcdn.com/vn.svg" },
       { name: "Yemen", flag: "https://flagcdn.com/ye.svg" },
       { name: "Zambia", flag: "https://flagcdn.com/zm.svg" },
-      { name: "Zimbabwe", flag: "https://flagcdn.com/zw.svg" }
+      { name: "Zimbabwe", flag: "https://flagcdn.com/zw.svg" }// Add all other countries here in the same format
     ];
 
     const container = document.getElementById('countries-container');
     const searchInput = document.getElementById('search');
+    const modal = document.getElementById('modal');
+    const modalCountryName = document.getElementById('modal-country-name');
+    const factsList = document.getElementById('facts-list');
+    const closeModal = document.querySelector('.close');
 
     function displayCountries(list) {
       container.innerHTML = '';
@@ -268,14 +320,37 @@
           <img src="${country.flag}" alt="${country.name}">
           <div class="country-name">${country.name}</div>
         `;
+        div.addEventListener('click', () => openModal(country));
         container.appendChild(div);
       });
     }
 
-    // Initial display
+    function openModal(country) {
+      modalCountryName.textContent = country.name;
+      factsList.innerHTML = '';
+      if(country.facts.length === 0) {
+        factsList.innerHTML = '<p>No facts yet.</p>';
+      } else {
+        country.facts.forEach(fact => {
+          const p = document.createElement('div');
+          p.className = 'fact';
+          p.textContent = fact;
+          factsList.appendChild(p);
+        });
+      }
+      modal.style.display = 'block';
+    }
+
+    closeModal.addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (e) => {
+      if(e.target === modal) modal.style.display = 'none';
+    });
+
     displayCountries(countries);
 
-    // Search functionality
     searchInput.addEventListener('input', () => {
       const searchTerm = searchInput.value.toLowerCase();
       const filtered = countries.filter(c => c.name.toLowerCase().includes(searchTerm));
