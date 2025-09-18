@@ -1,155 +1,62 @@
-/* ---------- General Styles ---------- */
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  background-color: #f7f9fc;
-  color: #333;
+/* ---------- Responsive Design ---------- */
+@media (max-width: 900px) {
+  .main-container {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  .side-ad {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .country {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .country img.flag {
+    width: 100%;
+    max-width: 150px;
+    margin-bottom: 10px;
+  }
+
+  input[type="text"] {
+    width: 100%;
+  }
+
+  #random-btn,
+  button {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  nav {
+    display: flex;
+    flex-direction: column;
+  }
+
+  nav a {
+    margin: 5px 0;
+  }
 }
 
-header {
-  background-color: #4a90e2;
-  color: white;
-  padding: 20px;
-  text-align: center;
-  font-size: 24px;
-}
+@media (max-width: 500px) {
+  header {
+    font-size: 20px;
+    padding: 15px;
+  }
 
-nav {
-  background-color: #e8f0fe;
-  padding: 10px;
-  text-align: center;
-}
+  .country h2 {
+    font-size: 16px;
+  }
 
-nav a {
-  text-decoration: none;
-  color: #4a90e2;
-  margin: 0 10px;
-  font-weight: bold;
-}
+  .country p {
+    font-size: 14px;
+  }
 
-nav a:hover {
-  text-decoration: underline;
-}
-
-/* ---------- Layout ---------- */
-.main-container {
-  display: flex;
-  gap: 20px;
-  padding: 20px;
-}
-
-.content {
-  flex: 1;
-}
-
-.side-ad {
-  width: 300px;
-}
-
-/* ---------- Inputs & Buttons ---------- */
-input[type="text"] {
-  padding: 8px;
-  width: 70%;
-  margin: 5px 0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-button {
-  padding: 8px 12px;
-  margin: 5px 0;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-button:hover {
-  opacity: 0.9;
-}
-
-#submit-fact {
-  background-color: #4a90e2;
-  color: white;
-}
-
-.approve-btn {
-  background-color: #28a745;
-  color: white;
-  margin-right: 5px;
-}
-
-.disapprove-btn {
-  background-color: #dc3545;
-  color: white;
-}
-
-/* ---------- Country Cards ---------- */
-.country {
-  background-color: white;
-  border: 1px solid #ddd;
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.country img.flag {
-  width: 60px;
-  height: auto;
-  border-radius: 4px;
-}
-
-.country h2 {
-  margin: 0;
-  font-size: 18px;
-}
-
-.country p {
-  margin: 5px 0;
-  flex: 1;
-}
-
-/* Like button inside country card */
-.country .like-btn {
-  background-color: #ffc107;
-  color: #333;
-  font-weight: bold;
-}
-
-/* ---------- Pending Submissions ---------- */
-.pending-entry {
-  background-color: #fff3cd;
-  border: 1px solid #ffeeba;
-  padding: 10px;
-  margin: 8px 0;
-  border-radius: 5px;
-}
-
-/* ---------- Leaderboard & Top Facts ---------- */
-#leaderboard p,
-#top-facts p {
-  background-color: #e2e3e5;
-  padding: 8px;
-  border-radius: 4px;
-  margin: 5px 0;
-}
-
-/* ---------- Search & Random Button ---------- */
-#search {
-  width: calc(100% - 10px);
-}
-
-#random-btn {
-  background-color: #17a2b8;
-  color: white;
-}
-
-/* ---------- No Results ---------- */
-#no-results {
-  color: #dc3545;
-  font-weight: bold;
-  margin-top: 10px;
+  #leaderboard p,
+  #top-facts p {
+    font-size: 14px;
+  }
 }
