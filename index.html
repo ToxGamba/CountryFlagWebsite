@@ -5,11 +5,24 @@
   <title>All Countries - Country Facts</title>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
+<<<<<<< HEAD
 
   <!-- AdSense script (required site-wide) -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9710772776347990"
      crossorigin="anonymous"></script>
+=======
+<head>
+  <meta charset="UTF-8">
+  <title>All Countries - Country Facts</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+  <!-- AdSense verification snippet -->
+  <script data-ad-client="ca-pub-9710772776347990" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+>>>>>>> 5201331008a43b46e730b46841bdaf81f7e68a3b
 </head>
+
 <body>
   <header>
     Country Facts 🌍
@@ -26,15 +39,19 @@
     <div class="side-ad">
 <<<<<<< HEAD
       <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9710772776347990"
+<<<<<<< HEAD
      crossorigin="anonymous"></script>
 =======
 >>>>>>> 81b3fbe (Initial site with default countries and ads)
+=======
+       crossorigin="anonymous"></script>
+>>>>>>> 5201331008a43b46e730b46841bdaf81f7e68a3b
       <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-9710772776347990"
-           data-ad-slot="4507655711"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
+         style="display:block"
+         data-ad-client="ca-pub-9710772776347990"
+         data-ad-slot="4507655711"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
       <script>
 <<<<<<< HEAD
            (adsbygoogle = window.adsbygoogle || []).push({});
@@ -52,6 +69,7 @@
 <<<<<<< HEAD
       <input type="text" id="search" placeholder="Search for a country..." />
       <button id="random-btn">Show Random Fact</button>
+
       <div id="country-list"></div>
       <p id="no-results" style="display:none;">No results found.</p>
 
@@ -74,6 +92,7 @@
       <button id="submit-fact">Submit</button>
       <p id="thankyou" style="display:none; color:green;">Thank you! Your submission has been recorded.</p>
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
       <!-- Pending Submissions (Admin Only) -->
@@ -88,21 +107,36 @@
       <h2>Top Contributed Countries</h2>
       <div id="top-facts"><p>Loading top countries...</p></div>
 >>>>>>> 81b3fbe (Initial site with default countries and ads)
+=======
+
+      <h2>Pending Submissions (Admin Only)</h2>
+      <div id="pending-submissions"><p>Loading pending submissions...</p></div>
+
+      <h2>Submission Leaderboard (Admin Only)</h2>
+      <div id="leaderboard"><p>Loading submissions...</p></div>
+
+      <h2>Top Contributed Countries</h2>
+      <div id="top-facts"><p>Loading top countries...</p></div>
+>>>>>>> 5201331008a43b46e730b46841bdaf81f7e68a3b
     </div>
 
     <!-- Right Side Ad -->
     <div class="side-ad">
 <<<<<<< HEAD
       <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9710772776347990"
+<<<<<<< HEAD
      crossorigin="anonymous"></script>
 =======
 >>>>>>> 81b3fbe (Initial site with default countries and ads)
+=======
+       crossorigin="anonymous"></script>
+>>>>>>> 5201331008a43b46e730b46841bdaf81f7e68a3b
       <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-9710772776347990"
-           data-ad-slot="4507655711"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
+         style="display:block"
+         data-ad-client="ca-pub-9710772776347990"
+         data-ad-slot="4507655711"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
       <script>
 <<<<<<< HEAD
            (adsbygoogle = window.adsbygoogle || []).push({});
@@ -114,11 +148,12 @@
 
   </div>
 
-  <!-- Firebase (optional) -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
   <script>
+<<<<<<< HEAD
 <<<<<<< HEAD
     // --- Hardcoded countries to always display ---
     const defaultCountries = {
@@ -129,6 +164,8 @@
       "Germany": "Known for its Oktoberfest celebration."
 =======
     // Your Firebase config here
+=======
+>>>>>>> 5201331008a43b46e730b46841bdaf81f7e68a3b
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
       authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
@@ -137,6 +174,7 @@
       storageBucket: "YOUR_PROJECT_ID.appspot.com",
       messagingSenderId: "YOUR_SENDER_ID",
       appId: "YOUR_APP_ID"
+<<<<<<< HEAD
 >>>>>>> 81b3fbe (Initial site with default countries and ads)
     };
 
@@ -196,6 +234,13 @@
     */
 =======
     // Submission handler
+=======
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // Submit fact
+>>>>>>> 5201331008a43b46e730b46841bdaf81f7e68a3b
     const submitBtn = document.getElementById("submit-fact");
     const countryInput = document.getElementById("user-country");
     const factInput = document.getElementById("user-fact");
@@ -204,21 +249,41 @@
     submitBtn.addEventListener("click", () => {
       const country = countryInput.value.trim();
       const fact = factInput.value.trim();
+<<<<<<< HEAD
       if(!country && !fact) return alert("Enter a country or fact.");
       const newSubmission = {country: country||null, fact: fact||null, timestamp: Date.now(), approved:false};
       db.ref("submissions").push(newSubmission).then(()=>{
         countryInput.value=""; factInput.value="";
         thankyou.style.display="block";
+=======
+      if (!country && !fact) return alert("Please enter a country or a fact.");
+      db.ref("submissions").push({
+        country: country || null,
+        fact: fact || null,
+        timestamp: Date.now(),
+        approved: false,
+        likes: 0
+      }).then(() => {
+        countryInput.value = ""; factInput.value = "";
+        thankyou.style.display = "block";
+>>>>>>> 5201331008a43b46e730b46841bdaf81f7e68a3b
         setTimeout(()=>thankyou.style.display="none",3000);
       });
     });
 
     // Load pending submissions
     const pendingDiv = document.getElementById("pending-submissions");
+<<<<<<< HEAD
     function loadPending(){
       db.ref("submissions").orderByChild("approved").equalTo(false).on("value", snapshot=>{
         const submissions=snapshot.val();
         pendingDiv.innerHTML="";
+=======
+    function loadPending() {
+      db.ref("submissions").orderByChild("approved").equalTo(false).on("value", snapshot => {
+        const submissions = snapshot.val();
+        pendingDiv.innerHTML = "";
+>>>>>>> 5201331008a43b46e730b46841bdaf81f7e68a3b
         if(!submissions){pendingDiv.innerHTML="<p>No pending submissions.</p>";return;}
         Object.entries(submissions).forEach(([id, entry])=>{
           const div=document.createElement("div");
@@ -229,7 +294,11 @@
         });
         pendingDiv.querySelectorAll("button").forEach(btn=>{
           btn.addEventListener("click", ()=>{
+<<<<<<< HEAD
             const id = btn.getAttribute("data-id");
+=======
+            const id=btn.getAttribute("data-id");
+>>>>>>> 5201331008a43b46e730b46841bdaf81f7e68a3b
             db.ref("submissions/"+id).update({approved:true});
           });
         });
@@ -237,23 +306,36 @@
     }
     loadPending();
 
+<<<<<<< HEAD
     // Load leaderboard
     const leaderboardDiv = document.getElementById("leaderboard");
     function loadLeaderboard(){
       db.ref("submissions").orderByChild("timestamp").limitToLast(20).on("value", snapshot=>{
+=======
+    // Leaderboard
+    const leaderboardDiv=document.getElementById("leaderboard");
+    function loadLeaderboard(){
+      db.ref("submissions").orderByChild("timestamp").limitToLast(20).on("value",snapshot=>{
+>>>>>>> 5201331008a43b46e730b46841bdaf81f7e68a3b
         const submissions=snapshot.val();
         leaderboardDiv.innerHTML="";
         if(!submissions){leaderboardDiv.innerHTML="<p>No submissions yet.</p>";return;}
         Object.entries(submissions).sort((a,b)=>b[1].timestamp-a[1].timestamp)
           .forEach(([id, entry])=>{
             const p=document.createElement("p");
+<<<<<<< HEAD
             p.innerText=`${entry.country||"No Country"} - ${entry.fact||"No Fact"} (Submitted: ${new Date(entry.timestamp).toLocaleString()})`;
+=======
+            const time=new Date(entry.timestamp).toLocaleString();
+            p.innerText=`${entry.country||"No Country"} - ${entry.fact||"No Fact"} (Submitted: ${time})`;
+>>>>>>> 5201331008a43b46e730b46841bdaf81f7e68a3b
             leaderboardDiv.appendChild(p);
           });
       });
     }
     loadLeaderboard();
 
+<<<<<<< HEAD
     // Load top countries
     const topFactsDiv = document.getElementById("top-facts");
     function loadTopFacts(){
@@ -269,12 +351,30 @@
         Object.entries(countryCount).sort((a,b)=>b[1]-a[1]).forEach(([country,count])=>{
           const p=document.createElement("p");
           p.innerText=`${country}: ${count} fact${count>1?"s":""}`;
+=======
+    // Top Contributed Countries (by likes)
+    const topFactsDiv = document.getElementById("top-facts");
+    function loadTopFacts() {
+      db.ref("submissions").on("value", snapshot => {
+        const submissions = snapshot.val();
+        topFactsDiv.innerHTML = "";
+        if(!submissions){topFactsDiv.innerHTML="<p>No submissions yet.</p>"; return;}
+        const countryLikes = {};
+        Object.values(submissions).forEach(entry=>{
+          if(!entry.country || !entry.approved) return;
+          countryLikes[entry.country] = Math.max(entry.likes || 0, countryLikes[entry.country] || 0);
+        });
+        Object.entries(countryLikes).sort((a,b)=>b[1]-a[1]).forEach(([country, likes])=>{
+          const p = document.createElement("p");
+          p.innerText = `${country}: ${likes} like${likes !== 1 ? "s" : ""}`;
+>>>>>>> 5201331008a43b46e730b46841bdaf81f7e68a3b
           topFactsDiv.appendChild(p);
         });
       });
     }
     loadTopFacts();
 
+<<<<<<< HEAD
     // Load approved countries
     const countryListDiv = document.getElementById("country-list");
     function loadCountries(){
@@ -282,22 +382,53 @@
         const approved = snapshot.val();
         if(!approved) return;
         Object.values(approved).forEach(entry=>{
+=======
+    // Load approved countries with like buttons
+    const countryListDiv = document.getElementById("country-list");
+    function loadCountries(){
+      db.ref("submissions").orderByChild("approved").equalTo(true).on("value", snapshot=>{
+        const approved = snapshot.val();
+        countryListDiv.innerHTML = "";
+        if(!approved) return;
+        Object.entries(approved).forEach(([id, entry])=>{
+>>>>>>> 5201331008a43b46e730b46841bdaf81f7e68a3b
           const countryName = entry.country;
           const fact = entry.fact;
           fetch(`https://restcountries.com/v3.1/name/${countryName}?fullText=true`).then(res=>res.json())
             .then(data=>{
               const flagURL = data[0].flags.png;
               const div = document.createElement("div");
+<<<<<<< HEAD
               div.className="country";
               div.innerHTML=`<img src="${flagURL}" alt="${countryName} Flag" class="flag">
                              <h2>${countryName}</h2><p>${fact}</p>`;
               countryListDiv.appendChild(div);
             }).catch(err=>console.log(err));
+=======
+              div.className = "country";
+              div.innerHTML = `
+                <img src="${flagURL}" alt="${countryName} Flag" class="flag">
+                <h2>${countryName}</h2>
+                <p>${fact}</p>
+                <button class="like-btn" data-id="${id}">👍 Like (<span class="like-count">${entry.likes||0}</span>)</button>
+              `;
+              countryListDiv.appendChild(div);
+
+              // Like button click
+              div.querySelector(".like-btn").addEventListener("click", ()=>{
+                const likeRef = db.ref("submissions/"+id+"/likes");
+                likeRef.transaction(current=>{
+                  return (current || 0) + 1;
+                });
+              });
+            }).catch(err=>console.log("Error fetching flag:",err));
+>>>>>>> 5201331008a43b46e730b46841bdaf81f7e68a3b
         });
       });
     }
     loadCountries();
 
+<<<<<<< HEAD
     // Search
     const searchInput=document.getElementById("search");
     searchInput.addEventListener("keyup", function(){
@@ -310,12 +441,26 @@
         else{countryList[i].style.display="none";}
       }
       document.getElementById("no-results").style.display = matches===0?"block":"none";
+=======
+    // Search filter
+    const searchInput = document.getElementById("search");
+    searchInput.addEventListener("keyup", function(){
+      const countryList = document.getElementsByClassName("country");
+      let filter = searchInput.value.toLowerCase(); let matches=0;
+      for(let i=0;i<countryList.length;i++){
+        const countryName=countryList[i].getElementsByTagName("h2")[0].innerText.toLowerCase();
+        if(countryName.includes(filter)){countryList[i].style.display="";matches++;} 
+        else {countryList[i].style.display="none";}
+      }
+      document.getElementById("no-results").style.display=matches===0?"block":"none";
+>>>>>>> 5201331008a43b46e730b46841bdaf81f7e68a3b
     });
 
     // Random fact button
     const randomBtn = document.getElementById("random-btn");
     randomBtn.addEventListener("click", function(){
       const countryList=document.getElementsByClassName("country");
+<<<<<<< HEAD
       const visible=[];
       for(let i=0;i<countryList.length;i++) if(countryList[i].style.display!=="none") visible.push(countryList[i]);
       if(visible.length===0) return;
@@ -324,6 +469,15 @@
       visible[idx].style.display="";
     });
 >>>>>>> 81b3fbe (Initial site with default countries and ads)
+=======
+      const visibleCountries=[];
+      for(let i=0;i<countryList.length;i++) if(countryList[i].style.display!=="none") visibleCountries.push(countryList[i]);
+      if(visibleCountries.length===0) return;
+      for(let i=0;i<countryList.length;i++) countryList[i].style.display="none";
+      const randomIndex = Math.floor(Math.random()*visibleCountries.length);
+      visibleCountries[randomIndex].style.display="";
+    });
+>>>>>>> 5201331008a43b46e730b46841bdaf81f7e68a3b
   </script>
 </body>
 </html>
