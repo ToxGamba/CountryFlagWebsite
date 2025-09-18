@@ -45,7 +45,7 @@
   <!-- Firebase SDKs -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-    import { getDatabase, ref, push, onValue, update, runTransaction } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+    import { getDatabase, ref, push, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC8X4vku5TqaD_toaNNbBaX46yxHjCYSd8",
@@ -87,36 +87,55 @@
       }).catch(err => console.log(err));
     });
 
-    // Load approved countries with like buttons
+    // Function to create country element with flag
+    async function createCountryElement(id, entry) {
+      const div = document.createElement("div");
+      div.className = "country";
+
+      let flagURL = "";
+      if(entry.country) {
+        try {
+          const res = await fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(entry.country)}?fullText=true`);
+          const data = await res.json();
+          flagURL = data[0]?.flags?.png || "";
+        } catch(err) {
+          console.log("Error fetching flag for", entry.country, err);
+        }
+      }
+
+      div.innerHTML = `
+        ${flagURL ? `<img src="${flagURL}" alt="${entry.country} Flag" class="flag">` : ""}
+        <h2>${entry.country || "No Country"}</h2>
+        <p>${entry.fact || "No Fact"}</p>
+        <button class="like-btn" data-id="${id}">👍 Like (<span class="like-count">${entry.likes||0}</span>)</button>
+      `;
+
+      div.querySelector(".like-btn").addEventListener("click", () => {
+        const likeRef = ref(db, "submissions/" + id + "/likes");
+        runTransaction(likeRef, current => (current||0)+1);
+      });
+
+      return div;
+    }
+
+    // Load approved countries
     function loadCountries() {
-      onValue(ref(db, "submissions"), snapshot => {
+      onValue(ref(db, "submissions"), async snapshot => {
         const submissions = snapshot.val();
         countryListDiv.innerHTML = "";
         if(!submissions) return;
 
-        Object.entries(submissions).forEach(([id, entry]) => {
-          if(!entry.approved) return;
-          const div = document.createElement("div");
-          div.className = "country";
-          div.innerHTML = `
-            <h2>${entry.country}</h2>
-            <p>${entry.fact}</p>
-            <button class="like-btn" data-id="${id}">👍 Like (<span class="like-count">${entry.likes||0}</span>)</button>
-          `;
+        for(const [id, entry] of Object.entries(submissions)) {
+          if(!entry.approved) continue;
+          const div = await createCountryElement(id, entry);
           countryListDiv.appendChild(div);
-
-          // Like button
-          div.querySelector(".like-btn").addEventListener("click", () => {
-            const likeRef = ref(db, "submissions/" + id + "/likes");
-            runTransaction(likeRef, current => (current||0)+1);
-          });
-        });
+        }
       });
     }
 
     loadCountries();
 
-    // Load leaderboard (last 20 submissions)
+    // Load leaderboard
     function loadLeaderboard() {
       onValue(ref(db, "submissions"), snapshot => {
         const submissions = snapshot.val();
