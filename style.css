@@ -1,204 +1,140 @@
-<<<<<<< HEAD
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-}
-
-header {
-  background-color: #4CAF50;
-  color: white;
-  text-align: center;
-  padding: 15px 0;
-  font-size: 1.8em;
-}
-
-nav {
-  background-color: #333;
-  display: flex;
-  justify-content: center;
-=======
-/* Reset some defaults */
+/* Reset & base */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: Arial, sans-serif;
 }
-
 body {
-  background: #f0f2f5;
+  font-family: Arial, sans-serif;
+  background: #f9f9f9;
   color: #333;
+  line-height: 1.6;
 }
 
 /* Header */
 header {
-  background: #4CAF50;
+  background: #0077cc;
   color: white;
+  padding: 1rem;
   text-align: center;
-  padding: 1rem 0;
-  font-size: 1.5rem;
-  font-weight: bold;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
-
-/* Navigation */
-nav {
-  background: #333;
-  padding: 0.5rem 0;
-  text-align: center;
->>>>>>> 81b3fbe (Initial site with default countries and ads)
+header h1 {
+  margin-bottom: 0.5rem;
 }
-
 nav a {
+  margin: 0 10px;
   color: white;
-<<<<<<< HEAD
-  padding: 12px 20px;
   text-decoration: none;
-}
-
-nav a:hover {
-  background-color: #575757;
-}
-
-.main-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 20px;
-  margin: 20px;
-=======
-  text-decoration: none;
-  margin: 0 1rem;
   font-weight: bold;
 }
-
 nav a:hover {
   text-decoration: underline;
 }
 
-/* Main container: flex layout for side ads */
-.main-container {
-  display: flex;
-  justify-content: center;
-  margin: 1rem;
+/* Main container */
+main {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 0 1rem;
+}
+section {
+  margin-bottom: 2rem;
+}
+h2 {
+  margin-bottom: 0.5rem;
+  border-bottom: 2px solid #0077cc;
+  padding-bottom: 0.3rem;
+}
+
+/* Fact cards */
+#country-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 1rem;
->>>>>>> 81b3fbe (Initial site with default countries and ads)
 }
-
-/* Side ads */
-.side-ad {
-<<<<<<< HEAD
-  flex: 0 0 160px;
-  position: sticky;
-  top: 20px;
-=======
-  flex: 0 0 160px; /* Fixed width for ad spaces */
->>>>>>> 81b3fbe (Initial site with default countries and ads)
-}
-
-/* Main content */
-.content {
-  flex: 1;
-<<<<<<< HEAD
-}
-
-.country {
-  border: 1px solid #ddd;
-  padding: 10px;
-  margin: 10px 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.flag {
-  width: 60px;
-  height: 40px;
-  object-fit: cover;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .main-container {
-    flex-direction: column;
-  }
-  .side-ad {
-    width: 100%;
-    margin-bottom: 20px;
-    position: relative;
-    top: 0;
-  }
-}
-=======
+.fact-card {
   background: white;
-  padding: 1rem 2rem;
+  padding: 1rem;
   border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  min-width: 300px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+.fact-card:hover {
+  transform: scale(1.02);
+}
+.fact-card h3 {
+  margin-bottom: 0.5rem;
+  color: #0077cc;
+}
+.fact-card button {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  background: #0077cc;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.fact-card button:hover {
+  background: #005fa3;
 }
 
-/* Country cards */
-.country {
-  border-bottom: 1px solid #ddd;
-  padding: 0.5rem 0;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+/* Forms */
+form label {
+  display: block;
+  margin-bottom: 0.5rem;
 }
-
-.country img.flag {
-  width: 50px;
-  height: auto;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-}
-
-/* Input and buttons */
-input[type="text"] {
+form input, form textarea {
   width: 100%;
-  padding: 0.5rem;
-  margin: 0.5rem 0;
-  border-radius: 4px;
+  padding: 0.6rem;
+  margin-bottom: 1rem;
   border: 1px solid #ccc;
+  border-radius: 5px;
 }
-
-button {
-  background: #4CAF50;
+form button {
+  background: #28a745;
   color: white;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+  padding: 0.7rem 1.5rem;
   cursor: pointer;
-  margin: 0.5rem 0;
+  border-radius: 5px;
+}
+form button:hover {
+  background: #218838;
 }
 
-button:hover {
-  background: #45a049;
+/* Pending list */
+#pending-list li {
+  background: white;
+  padding: 0.7rem;
+  margin-bottom: 0.5rem;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#pending-list button {
+  background: #ffc107;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+#pending-list button:hover {
+  background: #e0a800;
 }
 
-/* Pending submissions, leaderboard, top facts */
-#pending-submissions, #leaderboard, #top-facts {
-  margin: 0.5rem 0;
-  padding: 0.5rem;
-  background: #f9f9f9;
-  border-radius: 4px;
-  border: 1px solid #eee;
+/* Leaderboard */
+#leaderboard-list li {
+  background: #eef6ff;
+  padding: 0.7rem;
+  margin-bottom: 0.4rem;
+  border-radius: 5px;
+  font-weight: bold;
 }
 
-/* Responsive layout */
-@media(max-width: 900px) {
-  .main-container {
-    flex-direction: column;
-    align-items: center;
-  }
-  .side-ad {
-    width: 100%;
-    margin: 0.5rem 0;
-  }
-  .content {
-    width: 100%;
-  }
+/* Ad sidebar */
+.side-ad {
+  margin: 2rem auto;
+  text-align: center;
 }
-
->>>>>>> 81b3fbe (Initial site with default countries and ads)
