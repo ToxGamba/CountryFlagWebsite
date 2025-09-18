@@ -1,16 +1,127 @@
-body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f5f5f5; }
-header { background:#4CAF50; color:white; padding:15px; font-size:1.5em; text-align:center; }
-nav { background:#333; overflow:hidden; }
-nav a { float:left; display:block; color:white; text-align:center; padding:14px 16px; text-decoration:none; }
-nav a:hover { background:#ddd; color:black; }
+/* Reset some defaults */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
 
-.main-container { display:flex; justify-content:center; padding:20px; }
-.content { max-width:800px; margin:0 20px; }
-.side-ad { width:160px; margin:0 10px; text-align:center; }
+body {
+  background: #f0f2f5;
+  color: #333;
+}
 
-#search { width:100%; padding:10px; margin-bottom:15px; font-size:1em; }
-#random-btn, #submit-fact { padding:10px 15px; margin:10px 0; cursor:pointer; }
-.country, .pending-entry { background:white; padding:15px; margin-bottom:10px; border-radius:5px; box-shadow:0 2px 5px rgba(0,0,0,0.1); display:flex; align-items:center; }
-.country img.flag { width:50px; height:30px; margin-right:15px; object-fit:cover; border:1px solid #ccc; }
-h2 { margin:0 0 5px 0; }
-p { margin:0; }
+/* Header */
+header {
+  background: #4CAF50;
+  color: white;
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Navigation */
+nav {
+  background: #333;
+  padding: 0.5rem 0;
+  text-align: center;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  margin: 0 1rem;
+  font-weight: bold;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+/* Main container: flex layout for side ads */
+.main-container {
+  display: flex;
+  justify-content: center;
+  margin: 1rem;
+  gap: 1rem;
+}
+
+/* Side ads */
+.side-ad {
+  flex: 0 0 160px; /* Fixed width for ad spaces */
+}
+
+/* Main content */
+.content {
+  flex: 1;
+  background: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  min-width: 300px;
+}
+
+/* Country cards */
+.country {
+  border-bottom: 1px solid #ddd;
+  padding: 0.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.country img.flag {
+  width: 50px;
+  height: auto;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+/* Input and buttons */
+input[type="text"] {
+  width: 100%;
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 0.5rem 0;
+}
+
+button:hover {
+  background: #45a049;
+}
+
+/* Pending submissions, leaderboard, top facts */
+#pending-submissions, #leaderboard, #top-facts {
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  background: #f9f9f9;
+  border-radius: 4px;
+  border: 1px solid #eee;
+}
+
+/* Responsive layout */
+@media(max-width: 900px) {
+  .main-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  .side-ad {
+    width: 100%;
+    margin: 0.5rem 0;
+  }
+  .content {
+    width: 100%;
+  }
+}
