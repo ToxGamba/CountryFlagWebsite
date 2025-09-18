@@ -76,6 +76,17 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // ----------------------------
+    // Default countries and facts
+    const defaultCountries = [
+      { country: "India", fact: "India is the world’s largest democracy with over 1.4 billion people." },
+      { country: "Canada", fact: "Canada has more lakes than the rest of the world’s lakes combined." },
+      { country: "Australia", fact: "Australia is home to more kangaroos than humans." },
+      { country: "Japan", fact: "Japan has over 5 million vending machines selling everything from drinks to umbrellas." },
+      { country: "Egypt", fact: "Egypt is home to the Great Pyramid of Giza, the last surviving wonder of the ancient world." }
+    ];
+
+    // ----------------------------
     // Submission form
     const submitBtn = document.getElementById("submit-fact");
     const countryInput = document.getElementById("user-country");
@@ -101,6 +112,7 @@
         });
     });
 
+    // ----------------------------
     // Load top contributed countries
     const topFactsDiv = document.getElementById("top-facts");
     function loadTopFacts() {
@@ -124,52 +136,98 @@
     }
     loadTopFacts();
 
-    // Display approved submissions for public
+    // ----------------------------
+    // Display countries (defaults + approved)
     const countryListDiv = document.getElementById("country-list");
     function loadCountries() {
-      db.ref("submissions").orderByChild("approved").equalTo(true).once("value")
-      .then(snapshot => {
-        const approved = snapshot.val();
-        if (!approved) return;
-        Object.values(approved).forEach(entry => {
-          const countryName = entry.country;
-          const fact = entry.fact;
-          const div = document.createElement("div");
-          div.className = "country";
-          div.innerHTML = `
-            <h2>${countryName || "No Country"}</h2>
-            <p>${fact || "No Fact"}</p>
-          `;
-          countryListDiv.appendChild(div);
-        });
+      countryListDiv.innerHTML = "";
+
+      // Load default countries first
+      defaultCountries.forEach(entry => {
+        const countryName = entry.country;
+        const fact = entry.fact;
+
+        fetch(`https://restcountries.com/v3.1/name/${countryName}?fullText=true`)
+          .then(res => res.json())
+          .then(data => {
+            const flagURL = data[0].flags.png;
+            const div = document.createElement("div");
+            div.className = "country";
+            div.innerHTML = `
+              <img src="${flagURL}" alt="${countryName} Flag" class="flag">
+              <h2>${countryName}</h2>
+              <p>${fact}</p>
+            `;
+            countryListDiv.appendChild(div);
+          })
+          .catch(err => {
+            const div = document.createElement("div");
+            div.className = "country";
+            div.innerHTML = `<h2>${countryName}</h2><p>${fact}</p>`;
+            countryListDiv.appendChild(div);
+          });
       });
+
+      // Load approved submissions
+      db.ref("submissions").orderByChild("approved").equalTo(true).once("value")
+        .then(snapshot => {
+          const approved = snapshot.val();
+          if (!approved) return;
+
+          Object.values(approved).forEach(entry => {
+            const countryName = entry.country;
+            const fact = entry.fact;
+
+            fetch(`https://restcountries.com/v3.1/name/${countryName}?fullText=true`)
+              .then(res => res.json())
+              .then(data => {
+                const flagURL = data[0].flags.png;
+                const div = document.createElement("div");
+                div.className = "country";
+                div.innerHTML = `
+                  <img src="${flagURL}" alt="${countryName} Flag" class="flag">
+                  <h2>${countryName || "No Country"}</h2>
+                  <p>${fact || "No Fact"}</p>
+                `;
+                countryListDiv.appendChild(div);
+              })
+              .catch(err => {
+                const div = document.createElement("div");
+                div.className = "country";
+                div.innerHTML = `<h2>${countryName || "No Country"}</h2><p>${fact || "No Fact"}</p>`;
+                countryListDiv.appendChild(div);
+              });
+          });
+        });
     }
     loadCountries();
 
+    // ----------------------------
     // Search filter
     const searchInput = document.getElementById("search");
     searchInput.addEventListener("keyup", function() {
-      const countryList = document.getElementsByClassName("country");
+      const countryList = Array.from(document.getElementsByClassName("country"));
       let filter = searchInput.value.toLowerCase();
       let matches = 0;
-      for (let i=0;i<countryList.length;i++) {
-        const name = countryList[i].getElementsByTagName("h2")[0].innerText.toLowerCase();
-        if (name.includes(filter)) { countryList[i].style.display=""; matches++; }
-        else { countryList[i].style.display="none"; }
-      }
+      countryList.forEach(c => {
+        const name = c.getElementsByTagName("h2")[0].innerText.toLowerCase();
+        if (name.includes(filter)) { c.style.display=""; matches++; }
+        else { c.style.display="none"; }
+      });
       document.getElementById("no-results").style.display = matches===0?"block":"none";
     });
 
-    // Random fact button
+    // ----------------------------
+    // Random Fact Button - improved
     const randomBtn = document.getElementById("random-btn");
     randomBtn.addEventListener("click", function() {
-      const countryList = document.getElementsByClassName("country");
-      const visible = [];
-      for (let i=0;i<countryList.length;i++) if(countryList[i].style.display!=="none") visible.push(countryList[i]);
-      if(visible.length===0) return;
-      for(let i=0;i<countryList.length;i++) countryList[i].style.display="none";
-      const randomIndex = Math.floor(Math.random()*visible.length);
-      visible[randomIndex].style.display="";
+      const countryList = Array.from(document.getElementsByClassName("country"));
+      const visibleCountries = countryList.filter(c => c.style.display !== "none");
+      if (visibleCountries.length === 0) { alert("No countries available for random fact!"); return; }
+      countryList.forEach(c => c.style.display = "none");
+      const randomIndex = Math.floor(Math.random() * visibleCountries.length);
+      visibleCountries[randomIndex].style.display = "block";
+      visibleCountries[randomIndex].scrollIntoView({ behavior: "smooth", block: "start" });
     });
   </script>
 </body>
