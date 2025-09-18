@@ -2,27 +2,54 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <title>Country Likes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Country Facts</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f9f9f9;
+      padding: 20px;
+    }
+    h1 {
+      color: #333;
+    }
+    .country {
+      background: white;
+      padding: 15px;
+      margin: 10px auto;
+      border-radius: 8px;
+      max-width: 400px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    button {
+      padding: 8px 15px;
+      margin-top: 10px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      background: #007bff;
+      color: white;
+      font-size: 14px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .likes {
+      font-weight: bold;
+      color: #444;
+    }
+  </style>
 </head>
 <body>
-  <h1>🌍 Country Facts</h1>
+  <h1>🌍 Country Likes</h1>
 
-  <!-- Form to add facts -->
-  <form id="factForm">
-    <input type="text" id="country" placeholder="Country" required>
-    <input type="text" id="fact" placeholder="Enter a fun fact" required>
-    <button type="submit">Add Fact</button>
-  </form>
+  <div id="countries"></div>
 
-  <h2>Facts List</h2>
-  <ul id="factsList"></ul>
-
-  <!-- Firebase SDK -->
+  <!-- Firebase SDKs -->
   <script type="module">
-    // Import Firebase modules
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-    import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getDatabase, ref, set, get, child, update, onValue } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
     // Your Firebase config
     const firebaseConfig = {
@@ -39,38 +66,39 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Add fact
-    const factForm = document.getElementById("factForm");
-    factForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const country = document.getElementById("country").value;
-      const fact = document.getElementById("fact").value;
+    // Countries list
+    const countries = ["Canada", "United States", "Mexico", "Brazil", "Germany"];
 
-      const factsRef = ref(db, "facts");
-      const newFactRef = push(factsRef);
-      set(newFactRef, {
-        country: country,
-        fact: fact,
-        likes: 0
+    const container = document.getElementById("countries");
+
+    // Render countries with like buttons
+    countries.forEach(country => {
+      const div = document.createElement("div");
+      div.className = "country";
+      div.innerHTML = `
+        <h2>${country}</h2>
+        <p class="likes">Likes: <span id="likes-${country}">0</span></p>
+        <button onclick="likeCountry('${country}')">👍 Like</button>
+      `;
+      container.appendChild(div);
+
+      // Listen for realtime updates
+      const countryRef = ref(db, "likes/" + country);
+      onValue(countryRef, (snapshot) => {
+        const data = snapshot.val();
+        document.getElementById(`likes-${country}`).textContent = data?.count || 0;
       });
-
-      factForm.reset();
     });
 
-    // Load facts in real time
-    const factsList = document.getElementById("factsList");
-    const factsRef = ref(db, "facts");
-    onValue(factsRef, (snapshot) => {
-      factsList.innerHTML = "";
-      const data = snapshot.val();
-      if (data) {
-        Object.values(data).forEach((item) => {
-          const li = document.createElement("li");
-          li.textContent = `${item.country}: ${item.fact} (❤️ ${item.likes})`;
-          factsList.appendChild(li);
-        });
-      }
-    });
+    // Add like when button clicked
+    window.likeCountry = function(country) {
+      const countryRef = ref(db, "likes/" + country);
+
+      get(countryRef).then((snapshot) => {
+        let current = snapshot.exists() ? snapshot.val().count : 0;
+        update(countryRef, { count: current + 1 });
+      });
+    };
   </script>
 </body>
 </html>
