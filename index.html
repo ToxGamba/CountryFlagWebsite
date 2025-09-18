@@ -6,19 +6,23 @@
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
 
-  <!-- AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9710772776347990" crossorigin="anonymous"></script>
+  <!-- AdSense verification snippet -->
+  <script data-ad-client="ca-pub-9710772776347990" async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 </head>
+
 <body>
-  <header>Country Facts 🌍</header>
+  <header>
+    Country Facts 🌍
+  </header>
+
   <nav>
     <a href="index.html">Home</a>
     <a href="#">About</a>
   </nav>
 
   <div class="main-container">
-
-    <!-- Left Ad -->
+    <!-- Left Side Ad -->
     <div class="side-ad">
       <ins class="adsbygoogle"
            style="display:block"
@@ -32,29 +36,36 @@
     <!-- Main Content -->
     <div class="content">
       <h1>All Countries</h1>
+
+      <!-- Search and Random Fact -->
       <input type="text" id="search" placeholder="Search for a country..." />
       <button id="random-btn">Show Random Fact</button>
 
+      <!-- Country List -->
       <div id="country-list"></div>
       <p id="no-results" style="display:none;">No results found.</p>
 
+      <!-- Submission Form -->
       <h2>Submit a Country or Fact</h2>
       <input type="text" id="user-country" placeholder="Country Name">
       <input type="text" id="user-fact" placeholder="Your Fact">
       <button id="submit-fact">Submit</button>
       <p id="thankyou" style="display:none; color:green;">Thank you! Your submission has been recorded.</p>
 
-      <h2>Pending Submissions (Admin Only)</h2>
+      <!-- Pending Submissions (Admin Only) -->
+      <h2>Pending Submissions</h2>
       <div id="pending-submissions"><p>Loading pending submissions...</p></div>
 
-      <h2>Leaderboard</h2>
+      <!-- Leaderboard -->
+      <h2>Submission Leaderboard</h2>
       <div id="leaderboard"><p>Loading submissions...</p></div>
 
+      <!-- Top Contributed Countries -->
       <h2>Top Contributed Countries</h2>
       <div id="top-facts"><p>Loading top countries...</p></div>
     </div>
 
-    <!-- Right Ad -->
+    <!-- Right Side Ad -->
     <div class="side-ad">
       <ins class="adsbygoogle"
            style="display:block"
@@ -64,13 +75,12 @@
            data-full-width-responsive="true"></ins>
       <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
-
   </div>
 
   <!-- Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-    import { getDatabase, ref, push, onValue, update, runTransaction } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+    import { getDatabase, ref, push, onValue, runTransaction, update } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC8X4vku5TqaD_toaNNbBaX46yxHjCYSd8",
@@ -85,56 +95,72 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    const countryListDiv = document.getElementById("country-list");
-    const pendingDiv = document.getElementById("pending-submissions");
-    const leaderboardDiv = document.getElementById("leaderboard");
-    const topFactsDiv = document.getElementById("top-facts");
+    // Submit country/fact
+    const submitBtn = document.getElementById("submit-fact");
+    const countryInput = document.getElementById("user-country");
+    const factInput = document.getElementById("user-fact");
+    const thankyou = document.getElementById("thankyou");
 
-    // --- Submit a country/fact ---
-    document.getElementById("submit-fact").addEventListener("click", () => {
-      const country = document.getElementById("user-country").value.trim();
-      const fact = document.getElementById("user-fact").value.trim();
-      if(!country && !fact) return alert("Enter a country or fact.");
-      push(ref(db, "submissions"), { country: country || null, fact: fact || null, approved: false, likes: 0, timestamp: Date.now() });
-      document.getElementById("user-country").value = "";
-      document.getElementById("user-fact").value = "";
-      const thankyou = document.getElementById("thankyou");
+    submitBtn.addEventListener("click", () => {
+      const country = countryInput.value.trim();
+      const fact = factInput.value.trim();
+      if (!country && !fact) return alert("Enter a country or fact.");
+
+      push(ref(db, "submissions"), {
+        country: country || null,
+        fact: fact || null,
+        timestamp: Date.now(),
+        approved: false,
+        likes: 0
+      });
+
+      countryInput.value = "";
+      factInput.value = "";
       thankyou.style.display = "block";
-      setTimeout(()=>thankyou.style.display="none",3000);
+      setTimeout(()=>thankyou.style.display="none", 3000);
     });
 
-    // --- Load pending submissions ---
+    // Pending Submissions
+    const pendingDiv = document.getElementById("pending-submissions");
     function loadPending(){
-      onValue(ref(db, "submissions"), snapshot => {
-        const submissions = snapshot.val();
+      const pendingRef = ref(db, "submissions");
+      onValue(pendingRef, snapshot => {
+        const subs = snapshot.val();
         pendingDiv.innerHTML = "";
-        if(!submissions) { pendingDiv.innerHTML="<p>No pending submissions.</p>"; return; }
-        Object.entries(submissions).forEach(([id, entry]) => {
+        if(!subs) { pendingDiv.innerHTML="<p>No pending submissions.</p>"; return; }
+
+        Object.entries(subs).forEach(([id, entry])=>{
           if(entry.approved) return;
           const div = document.createElement("div");
           div.innerHTML = `<p><strong>${entry.country||"No Country"}</strong> - ${entry.fact||"No Fact"}</p>
-                           <button data-id="${id}" class="approve">Approve</button>
-                           <button data-id="${id}" class="disapprove">Disapprove</button>`;
+                           <button data-id="${id}" class="approve-btn">Approve</button>
+                           <button data-id="${id}" class="disapprove-btn">Disapprove</button>`;
           pendingDiv.appendChild(div);
 
-          div.querySelector(".approve").addEventListener("click", ()=> update(ref(db,"submissions/"+id),{approved:true}) );
-          div.querySelector(".disapprove").addEventListener("click", ()=> update(ref(db,"submissions/"+id),{approved:null}) );
+          div.querySelector(".approve-btn").addEventListener("click", ()=>{
+            update(ref(db, "submissions/"+id), {approved:true});
+          });
+          div.querySelector(".disapprove-btn").addEventListener("click", ()=>{
+            // Remove disapproved
+            update(ref(db, "submissions/"+id), {approved:null});
+          });
         });
       });
     }
     loadPending();
 
-    // --- Load leaderboard ---
+    // Leaderboard
+    const leaderboardDiv = document.getElementById("leaderboard");
     function loadLeaderboard(){
-      onValue(ref(db, "submissions"), snapshot => {
-        const submissions = snapshot.val();
+      const subRef = ref(db, "submissions");
+      onValue(subRef, snapshot => {
+        const subs = snapshot.val();
         leaderboardDiv.innerHTML = "";
-        if(!submissions) { leaderboardDiv.innerHTML="<p>No submissions yet.</p>"; return; }
-        Object.entries(submissions)
-          .sort((a,b)=>b[1].timestamp - a[1].timestamp)
-          .forEach(([id, entry]) => {
-            const time = new Date(entry.timestamp).toLocaleString();
+        if(!subs){ leaderboardDiv.innerHTML="<p>No submissions yet.</p>"; return; }
+        Object.entries(subs).sort((a,b)=>b[1].timestamp - a[1].timestamp)
+          .forEach(([id, entry])=>{
             const p = document.createElement("p");
+            const time = new Date(entry.timestamp).toLocaleString();
             p.innerText = `${entry.country||"No Country"} - ${entry.fact||"No Fact"} (Submitted: ${time})`;
             leaderboardDiv.appendChild(p);
           });
@@ -142,59 +168,66 @@
     }
     loadLeaderboard();
 
-    // --- Load top countries (by likes) ---
+    // Top liked countries
+    const topFactsDiv = document.getElementById("top-facts");
     function loadTopFacts(){
-      onValue(ref(db,"submissions"), snapshot => {
-        const submissions = snapshot.val();
+      onValue(ref(db, "submissions"), snapshot=>{
+        const subs = snapshot.val();
         topFactsDiv.innerHTML = "";
-        if(!submissions) { topFactsDiv.innerHTML="<p>No submissions yet.</p>"; return; }
+        if(!subs){ topFactsDiv.innerHTML="<p>No submissions yet.</p>"; return; }
+
         const countryLikes = {};
-        Object.values(submissions).forEach(entry=>{
-          if(!entry.country||!entry.approved) return;
+        Object.values(subs).forEach(entry=>{
+          if(!entry.country || !entry.approved) return;
           countryLikes[entry.country] = Math.max(entry.likes||0, countryLikes[entry.country]||0);
         });
-        Object.entries(countryLikes).sort((a,b)=>b[1]-a[1]).forEach(([country, likes])=>{
-          const p = document.createElement("p");
-          p.innerText = `${country}: ${likes} like${likes!==1?"s":""}`;
-          topFactsDiv.appendChild(p);
-        });
+        Object.entries(countryLikes).sort((a,b)=>b[1]-a[1])
+          .forEach(([country, likes])=>{
+            const p = document.createElement("p");
+            p.innerText = `${country}: ${likes} like${likes!==1?"s":""}`;
+            topFactsDiv.appendChild(p);
+          });
       });
     }
     loadTopFacts();
 
-    // --- Load approved countries with flags and like buttons ---
+    // Approved countries with flags & likes
+    const countryListDiv = document.getElementById("country-list");
     function loadCountries(){
-      onValue(ref(db,"submissions"), snapshot => {
-        const approved = snapshot.val();
+      onValue(ref(db, "submissions"), snapshot=>{
+        const subs = snapshot.val();
         countryListDiv.innerHTML = "";
-        if(!approved) return;
-        Object.entries(approved).forEach(([id, entry])=>{
-          if(!entry.approved || !entry.country) return;
-          fetch(`https://restcountries.com/v3.1/name/${entry.country}?fullText=true`)
+        if(!subs) return;
+
+        Object.entries(subs).forEach(([id, entry])=>{
+          if(!entry.approved) return;
+          const countryName = entry.country;
+          const fact = entry.fact;
+          fetch(`https://restcountries.com/v3.1/name/${countryName}?fullText=true`)
             .then(res=>res.json())
             .then(data=>{
               const flagURL = data[0].flags.png;
               const div = document.createElement("div");
               div.className="country";
               div.innerHTML = `
-                <img src="${flagURL}" alt="${entry.country} Flag" class="flag">
-                <h2>${entry.country}</h2>
-                <p>${entry.fact}</p>
+                <img src="${flagURL}" alt="${countryName} Flag" class="flag">
+                <h2>${countryName}</h2>
+                <p>${fact}</p>
                 <button class="like-btn" data-id="${id}">👍 Like (<span class="like-count">${entry.likes||0}</span>)</button>
               `;
               countryListDiv.appendChild(div);
 
-              // Like button
               const likeBtn = div.querySelector(".like-btn");
               const likeCountSpan = div.querySelector(".like-count");
+
               likeBtn.addEventListener("click", ()=>{
-                const likeRef = ref(db, "submissions/"+id+"/likes");
-                runTransaction(likeRef, current => (current||0)+1);
+                runTransaction(ref(db, "submissions/"+id+"/likes"), current => (current||0)+1);
               });
 
-              // Update like count in real-time
+              // Real-time update of like count
               onValue(ref(db,"submissions/"+id+"/likes"), snapshot=>{
-                likeCountSpan.innerText = snapshot.val()||0;
+                const likes = snapshot.val();
+                likeCountSpan.innerText = likes || 0;
               });
             }).catch(err=>console.log("Error fetching flag:",err));
         });
@@ -202,30 +235,31 @@
     }
     loadCountries();
 
-    // --- Search filter ---
+    // Search filter
     const searchInput = document.getElementById("search");
     searchInput.addEventListener("keyup", ()=>{
-      const countries = document.getElementsByClassName("country");
-      const filter = searchInput.value.toLowerCase();
-      let matches=0;
-      for(let i=0;i<countries.length;i++){
-        const name=countries[i].getElementsByTagName("h2")[0].innerText.toLowerCase();
-        if(name.includes(filter)){countries[i].style.display=""; matches++;}
-        else{countries[i].style.display="none";}
+      const countryList = document.getElementsByClassName("country");
+      let filter = searchInput.value.toLowerCase(); let matches=0;
+      for(let i=0;i<countryList.length;i++){
+        const countryName=countryList[i].getElementsByTagName("h2")[0].innerText.toLowerCase();
+        if(countryName.includes(filter)){countryList[i].style.display=""; matches++;} 
+        else {countryList[i].style.display="none";}
       }
-      document.getElementById("no-results").style.display = matches===0?"block":"none";
+      document.getElementById("no-results").style.display=matches===0?"block":"none";
     });
 
-    // --- Random Fact button ---
+    // Random fact button
     const randomBtn = document.getElementById("random-btn");
     randomBtn.addEventListener("click", ()=>{
-      const countries=document.getElementsByClassName("country");
-      const visible=[]; for(let i=0;i<countries.length;i++) if(countries[i].style.display!=="none") visible.push(countries[i]);
-      if(visible.length===0) return;
-      for(let i=0;i<countries.length;i++) countries[i].style.display="none";
-      const randomIndex = Math.floor(Math.random()*visible.length);
-      visible[randomIndex].style.display="";
+      const countryList=document.getElementsByClassName("country");
+      const visibleCountries=[];
+      for(let i=0;i<countryList.length;i++) if(countryList[i].style.display!=="none") visibleCountries.push(countryList[i]);
+      if(visibleCountries.length===0) return;
+      for(let i=0;i<countryList.length;i++) countryList[i].style.display="none";
+      const randomIndex = Math.floor(Math.random()*visibleCountries.length);
+      visibleCountries[randomIndex].style.display="";
     });
+
   </script>
 </body>
 </html>
