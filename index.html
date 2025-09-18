@@ -212,4 +212,15 @@
     // Random fact
     const randomBtn = document.getElementById("random-btn");
     randomBtn.addEventListener("click", ()=>{
-      const countryDivs = document.get
+      const countryDivs = document.getElementsByClassName("country");
+      const visible = [];
+      for (let i=0;i<countryDivs.length;i++) if(countryDivs[i].style.display!=="none") visible.push(countryDivs[i]);
+      if(visible.length===0) return;
+      for (let i=0;i<countryDivs.length;i++) countryDivs[i].style.display="none";
+      const idx = Math.floor(Math.random()*visible.length);
+      visible[idx].style.display="";
+    });
+
+  </script>
+</body>
+</html>
