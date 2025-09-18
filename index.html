@@ -2,249 +2,164 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>All Countries - Country Facts</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Country Flag Facts</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  
+  <!-- AdSense (verification + ads) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9710772776347990"
+     crossorigin="anonymous"></script>
 
-  <!-- AdSense verification snippet -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9710772776347990" crossorigin="anonymous"></script>
-</head>
-
-<body>
-  <header>
-    Country Facts 🌍
-  </header>
-
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="#">About</a>
-  </nav>
-
-  <div class="main-container">
-
-    <!-- Left Side Ad -->
-    <div class="side-ad">
-      <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-9710772776347990"
-         data-ad-slot="4507655711"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
-      <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
-    </div>
-
-    <!-- Main Content -->
-    <div class="content">
-      <h1>All Countries</h1>
-      <p>Here’s a growing list of countries with fun facts:</p>
-
-      <!-- Search Bar -->
-      <input type="text" id="search" placeholder="Search for a country..." />
-
-      <!-- Random Fact Button -->
-      <button id="random-btn">Show Random Fact</button>
-
-      <!-- Country Facts List -->
-      <div id="country-list"></div>
-      <p id="no-results" style="display:none;">No results found.</p>
-
-      <!-- Submission Form -->
-      <h2>Submit a Country or Fact</h2>
-      <input type="text" id="user-country" placeholder="Country Name">
-      <input type="text" id="user-fact" placeholder="Your Fact">
-      <button id="submit-fact">Submit</button>
-      <p id="thankyou" style="display:none; color:green;">Thank you! Your submission has been recorded.</p>
-
-      <!-- Pending Submissions (Admin Only) -->
-      <h2>Pending Submissions (Admin Only)</h2>
-      <div id="pending-submissions"><p>Loading pending submissions...</p></div>
-
-      <!-- Submission Leaderboard (Admin Only) -->
-      <h2>Submission Leaderboard (Admin Only)</h2>
-      <div id="leaderboard"><p>Loading submissions...</p></div>
-
-      <!-- Top Contributed Countries -->
-      <h2>Top Contributed Countries</h2>
-      <div id="top-facts"><p>Loading top countries...</p></div>
-    </div>
-
-    <!-- Right Side Ad -->
-    <div class="side-ad">
-      <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-9710772776347990"
-         data-ad-slot="4507655711"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
-      <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
-    </div>
-
-  </div>
-
-  <!-- Firebase -->
+  <!-- Firebase compat SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+  <header>
+    <h1>🌍 Country Flag Facts</h1>
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#submit">Submit Fact</a>
+      <a href="#pending">Pending</a>
+      <a href="#leaderboard">Leaderboard</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Country list -->
+    <section id="home">
+      <h2>Approved Facts</h2>
+      <div id="country-list"></div>
+    </section>
+
+    <!-- Submit -->
+    <section id="submit">
+      <h2>Submit a New Fact</h2>
+      <form id="fact-form">
+        <label>Country:
+          <input type="text" id="country-input" required>
+        </label>
+        <label>Fact:
+          <textarea id="fact-input" required></textarea>
+        </label>
+        <button type="submit">Submit</button>
+      </form>
+    </section>
+
+    <!-- Pending submissions (simple approval) -->
+    <section id="pending">
+      <h2>Pending Submissions</h2>
+      <ul id="pending-list"></ul>
+    </section>
+
+    <!-- Leaderboard -->
+    <section id="leaderboard">
+      <h2>Top Contributed Countries</h2>
+      <ol id="leaderboard-list"></ol>
+    </section>
+  </main>
+
+  <!-- Ad placements -->
+  <aside class="side-ad">
+    <ins class="adsbygoogle"
+      style="display:block"
+      data-ad-client="ca-pub-9710772776347990"
+      data-ad-slot="4507655711"
+      data-ad-format="auto"
+      data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </aside>
 
   <script>
-    // Firebase config
+    // --- Firebase config (your credentials) ---
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
+      apiKey: "AIzaSyC8X4vku5TqaD_toaNNbBaX46yxHjCYSd8",
+      authDomain: "countryflagwebsite.firebaseapp.com",
+      databaseURL: "https://countryflagwebsite-default-rtdb.firebaseio.com",
+      projectId: "countryflagwebsite",
+      storageBucket: "countryflagwebsite.firebasestorage.app",
+      messagingSenderId: "1019419410071",
+      appId: "1:1019419410071:web:9362a50598211638caf3d2"
     };
+
+    // Init Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Submit fact
-    const submitBtn = document.getElementById("submit-fact");
-    const countryInput = document.getElementById("user-country");
-    const factInput = document.getElementById("user-fact");
-    const thankyou = document.getElementById("thankyou");
+    // Form submission → save to DB
+    const factForm = document.getElementById("fact-form");
+    factForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const country = document.getElementById("country-input").value.trim();
+      const fact = document.getElementById("fact-input").value.trim();
+      if (!country || !fact) return;
 
-    submitBtn.addEventListener("click", () => {
-      const country = countryInput.value.trim();
-      const fact = factInput.value.trim();
-      if (!country && !fact) return alert("Please enter a country or a fact.");
-      db.ref("submissions").push({
-        country: country || null,
-        fact: fact || null,
-        timestamp: Date.now(),
+      const newRef = db.ref("submissions").push();
+      newRef.set({
+        country,
+        fact,
+        likes: 0,
         approved: false,
-        likes: 0
-      }).then(() => {
-        countryInput.value = ""; factInput.value = "";
-        thankyou.style.display = "block";
-        setTimeout(()=>thankyou.style.display="none",3000);
+        timestamp: Date.now()
+      });
+
+      factForm.reset();
+      alert("✅ Fact submitted! Waiting for approval.");
+    });
+
+    // Pending list
+    const pendingList = document.getElementById("pending-list");
+    db.ref("submissions").orderByChild("approved").equalTo(false).on("value", (snap) => {
+      pendingList.innerHTML = "";
+      snap.forEach((child) => {
+        const data = child.val();
+        const li = document.createElement("li");
+        li.textContent = `${data.country}: ${data.fact} `;
+        const btn = document.createElement("button");
+        btn.textContent = "Approve";
+        btn.onclick = () => {
+          db.ref("submissions/" + child.key).update({ approved: true });
+        };
+        li.appendChild(btn);
+        pendingList.appendChild(li);
       });
     });
 
-    // Load pending submissions
-    const pendingDiv = document.getElementById("pending-submissions");
-    function loadPending() {
-      db.ref("submissions").orderByChild("approved").equalTo(false).on("value", snapshot => {
-        const submissions = snapshot.val();
-        pendingDiv.innerHTML = "";
-        if(!submissions){pendingDiv.innerHTML="<p>No pending submissions.</p>";return;}
-        Object.entries(submissions).forEach(([id, entry])=>{
-          const div = document.createElement("div");
-          div.className="pending-entry";
-          div.innerHTML=`<p><strong>${entry.country||"No Country"}</strong> - ${entry.fact||"No Fact"}</p>
-                         <button data-id="${id}">Approve</button>`;
-          pendingDiv.appendChild(div);
-        });
-        pendingDiv.querySelectorAll("button").forEach(btn=>{
-          btn.addEventListener("click", ()=>{
-            const id = btn.getAttribute("data-id");
-            db.ref("submissions/"+id).update({approved:true});
-          });
-        });
+    // Approved facts
+    const countryList = document.getElementById("country-list");
+    db.ref("submissions").orderByChild("approved").equalTo(true).on("value", (snap) => {
+      countryList.innerHTML = "";
+      snap.forEach((child) => {
+        const data = child.val();
+        const div = document.createElement("div");
+        div.className = "fact-card";
+        div.innerHTML = `
+          <h3>${data.country}</h3>
+          <p>${data.fact}</p>
+          <button>👍 Like (${data.likes || 0})</button>
+        `;
+        div.querySelector("button").onclick = () => {
+          db.ref("submissions/" + child.key + "/likes").transaction((likes) => (likes || 0) + 1);
+        };
+        countryList.appendChild(div);
       });
-    }
-    loadPending();
-
-    // Leaderboard
-    const leaderboardDiv = document.getElementById("leaderboard");
-    function loadLeaderboard() {
-      db.ref("submissions").orderByChild("timestamp").limitToLast(20).on("value", snapshot => {
-        const submissions = snapshot.val();
-        leaderboardDiv.innerHTML = "";
-        if(!submissions){leaderboardDiv.innerHTML="<p>No submissions yet.</p>";return;}
-        Object.entries(submissions).sort((a,b)=>b[1].timestamp-a[1].timestamp)
-          .forEach(([id, entry])=>{
-            const time = new Date(entry.timestamp).toLocaleString();
-            const p = document.createElement("p");
-            p.innerText = `${entry.country||"No Country"} - ${entry.fact||"No Fact"} (Submitted: ${time})`;
-            leaderboardDiv.appendChild(p);
-          });
-      });
-    }
-    loadLeaderboard();
-
-    // Top Contributed Countries (by likes)
-    const topFactsDiv = document.getElementById("top-facts");
-    function loadTopFacts() {
-      db.ref("submissions").on("value", snapshot => {
-        const submissions = snapshot.val();
-        topFactsDiv.innerHTML = "";
-        if(!submissions){topFactsDiv.innerHTML="<p>No submissions yet.</p>"; return;}
-        const countryLikes = {};
-        Object.values(submissions).forEach(entry=>{
-          if(!entry.country || !entry.approved) return;
-          countryLikes[entry.country] = Math.max(entry.likes || 0, countryLikes[entry.country] || 0);
-        });
-        Object.entries(countryLikes).sort((a,b)=>b[1]-a[1]).forEach(([country, likes])=>{
-          const p = document.createElement("p");
-          p.innerText = `${country}: ${likes} like${likes !== 1 ? "s" : ""}`;
-          topFactsDiv.appendChild(p);
-        });
-      });
-    }
-    loadTopFacts();
-
-    // Load approved countries with like buttons
-    const countryListDiv = document.getElementById("country-list");
-    function loadCountries(){
-      db.ref("submissions").orderByChild("approved").equalTo(true).on("value", snapshot=>{
-        const approved = snapshot.val();
-        countryListDiv.innerHTML = "";
-        if(!approved) return;
-        Object.entries(approved).forEach(([id, entry])=>{
-          const countryName = entry.country;
-          const fact = entry.fact;
-          fetch(`https://restcountries.com/v3.1/name/${countryName}?fullText=true`).then(res=>res.json())
-            .then(data=>{
-              const flagURL = data[0].flags.png;
-              const div = document.createElement("div");
-              div.className = "country";
-              div.innerHTML = `
-                <img src="${flagURL}" alt="${countryName} Flag" class="flag">
-                <h2>${countryName}</h2>
-                <p>${fact}</p>
-                <button class="like-btn" data-id="${id}">👍 Like (<span class="like-count">${entry.likes||0}</span>)</button>
-              `;
-              countryListDiv.appendChild(div);
-
-              div.querySelector(".like-btn").addEventListener("click", ()=>{
-                const likeRef = db.ref("submissions/"+id+"/likes");
-                likeRef.transaction(current=> (current || 0) + 1 );
-              });
-            }).catch(err=>console.log("Error fetching flag:",err));
-        });
-      });
-    }
-    loadCountries();
-
-    // Search filter
-    const searchInput = document.getElementById("search");
-    searchInput.addEventListener("keyup", function(){
-      const countryList = document.getElementsByClassName("country");
-      let filter = searchInput.value.toLowerCase(); let matches=0;
-      for(let i=0;i<countryList.length;i++){
-        const countryName = countryList[i].getElementsByTagName("h2")[0].innerText.toLowerCase();
-        if(countryName.includes(filter)){countryList[i].style.display="";matches++;} 
-        else {countryList[i].style.display="none";}
-      }
-      document.getElementById("no-results").style.display = matches===0?"block":"none";
     });
 
-    // Random fact button
-    const randomBtn = document.getElementById("random-btn");
-    randomBtn.addEventListener("click", function(){
-      const countryList=document.getElementsByClassName("country");
-      const visibleCountries=[];
-      for(let i=0;i<countryList.length;i++) if(countryList[i].style.display!=="none") visibleCountries.push(countryList[i]);
-      if(visibleCountries.length===0) return;
-      for(let i=0;i<countryList.length;i++) countryList[i].style.display="none";
-      const randomIndex = Math.floor(Math.random()*visibleCountries.length);
-      visibleCountries[randomIndex].style.display="";
+    // Leaderboard (top liked)
+    const leaderboard = document.getElementById("leaderboard-list");
+    db.ref("submissions").orderByChild("approved").equalTo(true).on("value", (snap) => {
+      const counts = {};
+      snap.forEach((child) => {
+        const data = child.val();
+        counts[data.country] = (counts[data.country] || 0) + (data.likes || 0);
+      });
+      const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0,5);
+      leaderboard.innerHTML = "";
+      sorted.forEach(([country, likes]) => {
+        const li = document.createElement("li");
+        li.textContent = `${country}: ${likes} likes`;
+        leaderboard.appendChild(li);
+      });
     });
   </script>
 </body>
