@@ -2,76 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Country Flag Facts</title>
+  <title>Country Facts 🌍</title>
   <link rel="stylesheet" href="style.css">
-  
-  <!-- AdSense (verification + ads) -->
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+  <!-- AdSense verification -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9710772776347990"
-     crossorigin="anonymous"></script>
+          crossorigin="anonymous"></script>
 
-  <!-- Firebase compat SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-</head>
-<body>
-  <header>
-    <h1>🌍 Country Flag Facts</h1>
-    <nav>
-      <a href="#home">Home</a>
-      <a href="#submit">Submit Fact</a>
-      <a href="#pending">Pending</a>
-      <a href="#leaderboard">Leaderboard</a>
-    </nav>
-  </header>
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getDatabase, ref, push, update, onValue } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 
-  <main>
-    <!-- Country list -->
-    <section id="home">
-      <h2>Approved Facts</h2>
-      <div id="country-list"></div>
-    </section>
-
-    <!-- Submit -->
-    <section id="submit">
-      <h2>Submit a New Fact</h2>
-      <form id="fact-form">
-        <label>Country:
-          <input type="text" id="country-input" required>
-        </label>
-        <label>Fact:
-          <textarea id="fact-input" required></textarea>
-        </label>
-        <button type="submit">Submit</button>
-      </form>
-    </section>
-
-    <!-- Pending submissions (simple approval) -->
-    <section id="pending">
-      <h2>Pending Submissions</h2>
-      <ul id="pending-list"></ul>
-    </section>
-
-    <!-- Leaderboard -->
-    <section id="leaderboard">
-      <h2>Top Contributed Countries</h2>
-      <ol id="leaderboard-list"></ol>
-    </section>
-  </main>
-
-  <!-- Ad placements -->
-  <aside class="side-ad">
-    <ins class="adsbygoogle"
-      style="display:block"
-      data-ad-client="ca-pub-9710772776347990"
-      data-ad-slot="4507655711"
-      data-ad-format="auto"
-      data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-  </aside>
-
-  <script>
-    // --- Firebase config (your credentials) ---
+    // ✅ Your Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyC8X4vku5TqaD_toaNNbBaX46yxHjCYSd8",
       authDomain: "countryflagwebsite.firebaseapp.com",
@@ -82,85 +26,69 @@
       appId: "1:1019419410071:web:9362a50598211638caf3d2"
     };
 
-    // Init Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-    // Form submission → save to DB
-    const factForm = document.getElementById("fact-form");
-    factForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const country = document.getElementById("country-input").value.trim();
-      const fact = document.getElementById("fact-input").value.trim();
-      if (!country || !fact) return;
-
-      const newRef = db.ref("submissions").push();
-      newRef.set({
-        country,
-        fact,
-        likes: 0,
-        approved: false,
-        timestamp: Date.now()
-      });
-
-      factForm.reset();
-      alert("✅ Fact submitted! Waiting for approval.");
-    });
-
-    // Pending list
-    const pendingList = document.getElementById("pending-list");
-    db.ref("submissions").orderByChild("approved").equalTo(false).on("value", (snap) => {
-      pendingList.innerHTML = "";
-      snap.forEach((child) => {
-        const data = child.val();
-        const li = document.createElement("li");
-        li.textContent = `${data.country}: ${data.fact} `;
-        const btn = document.createElement("button");
-        btn.textContent = "Approve";
-        btn.onclick = () => {
-          db.ref("submissions/" + child.key).update({ approved: true });
-        };
-        li.appendChild(btn);
-        pendingList.appendChild(li);
-      });
-    });
-
-    // Approved facts
-    const countryList = document.getElementById("country-list");
-    db.ref("submissions").orderByChild("approved").equalTo(true).on("value", (snap) => {
-      countryList.innerHTML = "";
-      snap.forEach((child) => {
-        const data = child.val();
-        const div = document.createElement("div");
-        div.className = "fact-card";
-        div.innerHTML = `
-          <h3>${data.country}</h3>
-          <p>${data.fact}</p>
-          <button>👍 Like (${data.likes || 0})</button>
-        `;
-        div.querySelector("button").onclick = () => {
-          db.ref("submissions/" + child.key + "/likes").transaction((likes) => (likes || 0) + 1);
-        };
-        countryList.appendChild(div);
-      });
-    });
-
-    // Leaderboard (top liked)
-    const leaderboard = document.getElementById("leaderboard-list");
-    db.ref("submissions").orderByChild("approved").equalTo(true).on("value", (snap) => {
-      const counts = {};
-      snap.forEach((child) => {
-        const data = child.val();
-        counts[data.country] = (counts[data.country] || 0) + (data.likes || 0);
-      });
-      const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0,5);
-      leaderboard.innerHTML = "";
-      sorted.forEach(([country, likes]) => {
-        const li = document.createElement("li");
-        li.textContent = `${country}: ${likes} likes`;
-        leaderboard.appendChild(li);
-      });
-    });
+    // Make Firebase available globally
+    window.db = db;
+    window.ref = ref;
+    window.push = push;
+    window.update = update;
+    window.onValue = onValue;
   </script>
+</head>
+<body>
+  <header>
+    Country Facts 🌍
+  </header>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="#">About</a>
+  </nav>
+
+  <div class="main-container">
+    <!-- Left Ad -->
+    <div class="side-ad">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-9710772776347990"
+           data-ad-slot="4507655711"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+      <h1>All Countries</h1>
+      <p>Here’s a growing list of countries with fun facts:</p>
+
+      <input type="text" id="search" placeholder="Search for a country...">
+      <button id="random-btn">Show Random Fact</button>
+
+      <div id="country-list"></div>
+      <p id="no-results" style="display:none;">No results found.</p>
+
+      <h2>Submit a Country or Fact</h2>
+      <input type="text" id="user-country" placeholder="Country Name">
+      <input type="text" id="user-fact" placeholder="Your Fact">
+      <button id="submit-fact">Submit</button>
+      <p id="thankyou" style="display:none; color:green;">Thank you! Your submission has been recorded.</p>
+    </div>
+
+    <!-- Right Ad -->
+    <div class="side-ad">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-9710772776347990"
+           data-ad-slot="4507655711"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+  </div>
+
+  <script src="script.js" type="module"></script>
 </body>
 </html>
