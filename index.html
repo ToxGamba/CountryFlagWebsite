@@ -1,94 +1,84 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Country Facts 🌍</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
+<div id="country-list"></div>
+<input type="text" id="search" placeholder="Search for a country..." />
+<button id="random-btn">Show Random Fact</button>
 
-  <!-- AdSense verification -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9710772776347990"
-          crossorigin="anonymous"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+  import { getDatabase, ref, onValue, update, push } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getDatabase, ref, push, update, onValue } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+  const firebaseConfig = {
+    apiKey: "AIzaSyC8X4vku5TqaD_toaNNbBaX46yxHjCYSd8",
+    authDomain: "countryflagwebsite.firebaseapp.com",
+    databaseURL: "https://countryflagwebsite-default-rtdb.firebaseio.com",
+    projectId: "countryflagwebsite",
+    storageBucket: "countryflagwebsite.firebasestorage.app",
+    messagingSenderId: "1019419410071",
+    appId: "1:1019419410071:web:9362a50598211638caf3d2"
+  };
 
-    // ✅ Your Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyC8X4vku5TqaD_toaNNbBaX46yxHjCYSd8",
-      authDomain: "countryflagwebsite.firebaseapp.com",
-      databaseURL: "https://countryflagwebsite-default-rtdb.firebaseio.com",
-      projectId: "countryflagwebsite",
-      storageBucket: "countryflagwebsite.firebasestorage.app",
-      messagingSenderId: "1019419410071",
-      appId: "1:1019419410071:web:9362a50598211638caf3d2"
-    };
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+  const countryListDiv = document.getElementById("country-list");
+  const searchInput = document.getElementById("search");
+  const randomBtn = document.getElementById("random-btn");
 
-    // Make Firebase available globally
-    window.db = db;
-    window.ref = ref;
-    window.push = push;
-    window.update = update;
-    window.onValue = onValue;
-  </script>
-</head>
-<body>
-  <header>
-    Country Facts 🌍
-  </header>
+  // Load countries from Firebase
+  function loadCountries() {
+    const countriesRef = ref(db, 'facts');
+    onValue(countriesRef, (snapshot) => {
+      const data = snapshot.val();
+      countryListDiv.innerHTML = "";
+      for (const key in data) {
+        const country = data[key].country;
+        const fact = data[key].fact;
+        const likes = data[key].likes || 0;
 
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="#">About</a>
-  </nav>
+        fetch(`https://restcountries.com/v3.1/name/${country}?fullText=true`)
+          .then(res => res.json())
+          .then(countryData => {
+            const flagURL = countryData[0].flags.png;
+            const div = document.createElement("div");
+            div.className = "country";
+            div.innerHTML = `
+              <img src="${flagURL}" alt="${country} Flag" class="flag">
+              <h2>${country}</h2>
+              <p>${fact}</p>
+              <button class="like-btn" data-key="${key}">👍 Like (<span class="like-count">${likes}</span>)</button>
+            `;
+            countryListDiv.appendChild(div);
 
-  <div class="main-container">
-    <!-- Left Ad -->
-    <div class="side-ad">
-      <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-9710772776347990"
-           data-ad-slot="4507655711"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    </div>
+            // Like button
+            div.querySelector(".like-btn").addEventListener("click", () => {
+              const likeRef = ref(db, `facts/${key}/likes`);
+              update(likeRef, { ".value": likes + 1 }); // update likes
+            });
+          })
+          .catch(err => console.log("Flag error:", err));
+      }
+    });
+  }
 
-    <!-- Main Content -->
-    <div class="content">
-      <h1>All Countries</h1>
-      <p>Here’s a growing list of countries with fun facts:</p>
+  // Search filter
+  searchInput.addEventListener("keyup", () => {
+    const countryDivs = document.getElementsByClassName("country");
+    const filter = searchInput.value.toLowerCase();
+    let matches = 0;
+    for (let div of countryDivs) {
+      const name = div.getElementsByTagName("h2")[0].innerText.toLowerCase();
+      if (name.includes(filter)) { div.style.display = ""; matches++; }
+      else div.style.display = "none";
+    }
+  });
 
-      <input type="text" id="search" placeholder="Search for a country...">
-      <button id="random-btn">Show Random Fact</button>
+  // Random fact
+  randomBtn.addEventListener("click", () => {
+    const visible = Array.from(document.getElementsByClassName("country")).filter(c => c.style.display !== "none");
+    if (!visible.length) return;
+    visible.forEach(c => c.style.display = "none");
+    const random = visible[Math.floor(Math.random() * visible.length)];
+    random.style.display = "";
+  });
 
-      <div id="country-list"></div>
-      <p id="no-results" style="display:none;">No results found.</p>
-
-      <h2>Submit a Country or Fact</h2>
-      <input type="text" id="user-country" placeholder="Country Name">
-      <input type="text" id="user-fact" placeholder="Your Fact">
-      <button id="submit-fact">Submit</button>
-      <p id="thankyou" style="display:none; color:green;">Thank you! Your submission has been recorded.</p>
-    </div>
-
-    <!-- Right Ad -->
-    <div class="side-ad">
-      <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-9710772776347990"
-           data-ad-slot="4507655711"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    </div>
-  </div>
-
-  <script src="script.js" type="module"></script>
-</body>
-</html>
+  loadCountries();
+</script>
