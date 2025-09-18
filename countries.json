@@ -1,0 +1,79 @@
+{
+  "facts": {
+    "canada": {
+      "country": "Canada",
+      "fact": "Has more lakes than any other country.",
+      "likes": 0
+    },
+    "japan": {
+      "country": "Japan",
+      "fact": "Famous for cherry blossoms and sushi.",
+      "likes": 0
+    },
+    "brazil": {
+      "country": "Brazil",
+      "fact": "Home to the Amazon rainforest.",
+      "likes": 0
+    },
+    "india": {
+      "country": "India",
+      "fact": "The largest democracy in the world.",
+      "likes": 0
+    },
+    "germany": {
+      "country": "Germany",
+      "fact": "Known for Oktoberfest and castles.",
+      "likes": 0
+    },
+    "france": {
+      "country": "France",
+      "fact": "Famous for the Eiffel Tower and cuisine.",
+      "likes": 0
+    },
+    "australia": {
+      "country": "Australia",
+      "fact": "Home to the Great Barrier Reef.",
+      "likes": 0
+    },
+    "egypt": {
+      "country": "Egypt",
+      "fact": "Land of ancient pyramids and pharaohs.",
+      "likes": 0
+    },
+    "mexico": {
+      "country": "Mexico",
+      "fact": "Famous for tacos and Mayan ruins.",
+      "likes": 0
+    },
+    "southafrica": {
+      "country": "South Africa",
+      "fact": "Known for wildlife safaris and Table Mountain.",
+      "likes": 0
+    },
+    "italy": {
+      "country": "Italy",
+      "fact": "Famous for pasta, pizza, and Rome’s Colosseum.",
+      "likes": 0
+    },
+    "china": {
+      "country": "China",
+      "fact": "Home to the Great Wall and pandas.",
+      "likes": 0
+    },
+    "russia": {
+      "country": "Russia",
+      "fact": "Largest country by land area.",
+      "likes": 0
+    },
+    "spain": {
+      "country": "Spain",
+      "fact": "Famous for flamenco, siestas, and beaches.",
+      "likes": 0
+    },
+    "uk": {
+      "country": "United Kingdom",
+      "fact": "Known for Big Ben, tea, and royal history.",
+      "likes": 0
+    }
+  }
+}
