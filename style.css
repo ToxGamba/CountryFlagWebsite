@@ -1,181 +1,154 @@
+/* --- General Styles --- */
 body {
-  margin: 0;
   font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
   background: #f5f5f5;
   color: #333;
 }
 
 header {
-  background: #2d89ef;
+  background: #4CAF50;
   color: white;
-  text-align: center;
   padding: 20px;
-  font-size: 2em;
-  font-weight: bold;
+  font-size: 1.8em;
+  text-align: center;
 }
 
 nav {
-  background: #e0e0e0;
+  background: #333;
   padding: 10px;
   text-align: center;
 }
 
 nav a {
+  color: white;
   margin: 0 15px;
   text-decoration: none;
   font-weight: bold;
-  color: #2d89ef;
-  transition: color 0.3s ease;
 }
 
 nav a:hover {
-  color: #1a5fb4;
+  text-decoration: underline;
 }
 
 main {
-  max-width: 800px;
-  margin: 30px auto;
   padding: 20px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  max-width: 900px;
+  margin: auto;
 }
 
-.country {
-  margin-bottom: 20px;
-  padding: 15px;
-  border-left: 6px solid #2d89ef;
-  background: #f0f8ff;
-  border-radius: 8px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  display: flex;
-  align-items: center;
-}
-
-.country:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
-.flag {
-  width: 50px;
-  height: auto;
-  margin-right: 15px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  transition: transform 0.2s ease;
-}
-
-.flag:hover {
-  transform: scale(1.1);
-}
-
+/* --- Sticky Search Bar --- */
 #search {
   width: 100%;
-  padding: 12px;
-  margin: 15px 0 25px;
-  border: 2px solid #2d89ef;
-  border-radius: 8px;
+  padding: 10px;
   font-size: 1em;
+  margin-bottom: 15px;
   position: sticky;
   top: 0;
   background: white;
-  z-index: 10;
+  border: 1px solid #ccc;
+  z-index: 100;
 }
 
-#no-results {
-  text-align: center;
-  font-size: 1.1em;
-  color: #555;
-  margin-top: 20px;
-}
-
+/* --- Random Fact Button --- */
 #random-btn {
-  padding: 12px 20px;
-  background-color: #2d89ef;
+  display: inline-block;
+  margin-bottom: 20px;
+  padding: 10px 20px;
+  background: #2196F3;
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 1em;
   cursor: pointer;
-  margin-bottom: 20px;
-  transition: background-color 0.3s ease;
+  font-size: 1em;
+  border-radius: 5px;
 }
 
 #random-btn:hover {
-  background-color: #1a5fb4;
+  background: #0b7dda;
 }
 
+/* --- Country Cards --- */
+.country {
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.country h2 {
+  margin-top: 0;
+}
+
+.country img.flag {
+  max-width: 120px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* --- Sections --- */
+h2 {
+  margin-top: 30px;
+  color: #4CAF50;
+  border-bottom: 2px solid #4CAF50;
+  padding-bottom: 5px;
+}
+
+#top-facts, #pending-submissions, #leaderboard {
+  background: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+/* --- User Submission Form --- */
 #user-country, #user-fact {
-  width: 48%;
+  width: calc(50% - 10px);
   padding: 10px;
-  margin: 5px 1%;
-  border: 2px solid #2d89ef;
-  border-radius: 6px;
-  font-size: 1em;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
 }
 
 #submit-fact {
   padding: 10px 20px;
-  background-color: #2d89ef;
+  background: #FF9800;
   color: white;
   border: none;
-  border-radius: 6px;
   cursor: pointer;
-  font-size: 1em;
-  margin: 5px 0 20px;
-  transition: background-color 0.3s ease;
+  border-radius: 5px;
 }
 
 #submit-fact:hover {
-  background-color: #1a5fb4;
+  background: #e68a00;
 }
 
-#thankyou {
+/* --- No Results Text --- */
+#no-results {
+  color: red;
   font-weight: bold;
+  margin-top: 10px;
 }
 
-/* Pending submissions styling */
+/* --- Admin Sections (optional visual hint) --- */
 .pending-entry {
-  background: #fff3cd;
-  border: 2px solid #ffeeba;
-  border-radius: 6px;
-  padding: 10px;
-  margin-bottom: 10px;
+  border-bottom: 1px solid #ccc;
+  padding: 10px 0;
 }
 
 .pending-entry button {
-  margin-top: 5px;
-  padding: 5px 10px;
-  background-color: #28a745;
+  background: #4CAF50;
   color: white;
   border: none;
-  border-radius: 4px;
+  padding: 5px 10px;
+  margin-top: 5px;
   cursor: pointer;
+  border-radius: 3px;
 }
 
 .pending-entry button:hover {
-  background-color: #218838;
-}
-
-/* Leaderboard & Top Facts */
-#leaderboard, #top-facts {
-  background: #fefefe;
-  border: 2px solid #2d89ef;
-  border-radius: 8px;
-  padding: 15px;
-  max-height: 300px;
-  overflow-y: auto;
-  margin-top: 20px;
-}
-
-#leaderboard p, #top-facts p {
-  margin: 5px 0;
-  padding: 5px;
-  border-bottom: 1px solid #ccc;
-  font-size: 0.95em;
-}
-
-#top-facts p {
-  font-weight: bold;
+  background: #388E3C;
 }
