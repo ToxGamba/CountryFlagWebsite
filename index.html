@@ -3,298 +3,82 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Country Facts</title>
+  <title>Country Flags</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      text-align: center;
+      background-color: #111;
+      color: #fff;
       margin: 0;
       padding: 0;
-      transition: background 0.3s, color 0.3s;
     }
-    h1 {
-      margin: 20px;
+    header {
+      text-align: center;
+      padding: 1rem;
+      background: #222;
     }
-    .toggle-btn {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      background: none;
-      border: 1px solid currentColor;
-      padding: 5px 10px;
-      cursor: pointer;
-      border-radius: 8px;
-    }
-    .country-grid {
+    #countries {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-      gap: 10px;
-      padding: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 1rem;
+      padding: 1rem;
     }
     .country {
-      border: 1px solid;
-      padding: 10px;
+      background: #1e1e1e;
       border-radius: 8px;
-      cursor: pointer;
-      transition: 0.2s;
+      padding: 10px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+      transition: transform 0.2s;
     }
     .country:hover {
-      opacity: 0.8;
+      transform: scale(1.05);
     }
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.8);
-      justify-content: center;
-      align-items: center;
+    .country img {
+      width: 80px;
+      height: auto;
+      border-radius: 4px;
+      margin-bottom: 5px;
     }
-    .modal-content {
-      padding: 20px;
-      border-radius: 10px;
-      width: 80%;
-      max-width: 500px;
-      text-align: left;
-    }
-    .close {
-      float: right;
-      cursor: pointer;
-      font-size: 20px;
-    }
-    #adminPanel {
-      display: none;
-      padding: 20px;
-      margin: 20px;
-      border-radius: 10px;
-      text-align: left;
-    }
-    .pending-item {
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 8px;
-    }
-    .approve, .reject {
-      border: none;
-      padding: 5px 10px;
-      margin-right: 5px;
-      cursor: pointer;
-      border-radius: 5px;
-    }
-    .approve { background: green; color: white; }
-    .reject { background: red; color: white; }
-
-    /* Light theme */
-    body.light {
-      background: #f5f5f5;
-      color: #000;
-    }
-    body.light .country {
-      background: #fff;
-      border-color: #ccc;
-    }
-    body.light .modal-content {
-      background: #fff;
-      color: #000;
-    }
-    body.light #adminPanel {
-      background: #fff;
-      border: 1px solid #ccc;
-    }
-    body.light .pending-item {
-      background: #eee;
-    }
-
-    /* Dark theme */
-    body.dark {
-      background: #121212;
-      color: #fff;
-    }
-    body.dark .country {
-      background: #1e1e1e;
-      border-color: #333;
-    }
-    body.dark .modal-content {
-      background: #222;
-      color: #fff;
-    }
-    body.dark #adminPanel {
-      background: #1b1b1b;
-    }
-    body.dark .pending-item {
-      background: #2a2a2a;
+    .country span {
+      display: block;
+      font-size: 14px;
+      margin-top: 5px;
     }
   </style>
 </head>
 <body>
-  <button class="toggle-btn" onclick="toggleTheme()">🌙</button>
-  <h1>🌍 Country Facts</h1>
+  <header>
+    <h1>🌍 Country Flags</h1>
+    <p>Click on a country to view more facts.</p>
+  </header>
 
-  <!-- Country Grid -->
-  <div class="country-grid" id="countryGrid">
-    <div class="country" onclick="openModal('Canada')">🇨🇦 Canada</div>
-    <div class="country" onclick="openModal('USA')">🇺🇸 USA</div>
-    <div class="country" onclick="openModal('UK')">🇬🇧 UK</div>
-    <div class="country" onclick="openModal('Japan')">🇯🇵 Japan</div>
-    <div class="country" onclick="openModal('Germany')">🇩🇪 Germany</div>
-    <div class="country" onclick="openModal('France')">🇫🇷 France</div>
-  </div>
+  <main>
+    <div id="countries"></div>
+  </main>
 
-  <!-- Submit Fact -->
-  <h2>Submit a Fact</h2>
-  <select id="countrySelect">
-    <option value="">Select a country</option>
-    <option value="Canada">Canada</option>
-    <option value="USA">USA</option>
-    <option value="UK">UK</option>
-    <option value="Japan">Japan</option>
-    <option value="Germany">Germany</option>
-    <option value="France">France</option>
-  </select>
-  <input type="text" id="factInput" placeholder="Enter your fact here">
-  <button onclick="submitFact()">Submit</button>
+  <script>
+    async function loadCountries() {
+      try {
+        const res = await fetch('countries.json');
+        const countries = await res.json();
 
-  <!-- Admin Panel -->
-  <div id="adminPanel">
-    <h2>Admin Panel - Pending Facts</h2>
-    <div id="pendingList"></div>
-  </div>
-
-  <!-- Modal -->
-  <div id="factModal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeModal()">&times;</span>
-      <h2 id="modalCountry"></h2>
-      <ul id="factList"></ul>
-    </div>
-  </div>
-
-  <!-- Firebase + Logic -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getDatabase, ref, push, set, get, remove, onValue }
-      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyC8X4vku5TqaD_toaNNbBaX46yxHjCYSd8",
-      authDomain: "countryflagwebsite.firebaseapp.com",
-      databaseURL: "https://countryflagwebsite-default-rtdb.firebaseio.com",
-      projectId: "countryflagwebsite",
-      storageBucket: "countryflagwebsite.firebasestorage.app",
-      messagingSenderId: "1019419410071",
-      appId: "1:1019419410071:web:9362a50598211638caf3d2"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    // THEME TOGGLE
-    function applyTheme(theme) {
-      document.body.classList.remove("light", "dark");
-      document.body.classList.add(theme);
-      localStorage.setItem("theme", theme);
-      document.querySelector(".toggle-btn").textContent = theme === "dark" ? "🌙" : "☀️";
-    }
-
-    window.toggleTheme = function() {
-      const current = document.body.classList.contains("dark") ? "dark" : "light";
-      const next = current === "dark" ? "light" : "dark";
-      applyTheme(next);
-    };
-
-    // Load saved theme
-    const savedTheme = localStorage.getItem("theme") || "dark";
-    applyTheme(savedTheme);
-
-    // FACT SUBMISSION
-    window.submitFact = function() {
-      const country = document.getElementById("countrySelect").value;
-      const fact = document.getElementById("factInput").value.trim();
-
-      if (!country || !fact) {
-        alert("Please select a country and enter a fact!");
-        return;
-      }
-
-      const factRef = push(ref(db, "pendingFacts"));
-      set(factRef, { country, fact });
-
-      alert("Fact submitted! (Pending approval)");
-      document.getElementById("factInput").value = "";
-      document.getElementById("countrySelect").value = "";
-    };
-
-    // Load pending facts
-    function loadPendingFacts() {
-      const pendingRef = ref(db, "pendingFacts");
-      onValue(pendingRef, (snapshot) => {
-        const pendingList = document.getElementById("pendingList");
-        pendingList.innerHTML = "";
-
-        if (!snapshot.exists()) {
-          pendingList.innerHTML = "<p>No pending facts.</p>";
-          return;
-        }
-
-        snapshot.forEach((child) => {
-          const item = child.val();
-          const id = child.key;
-
-          const div = document.createElement("div");
-          div.className = "pending-item";
+        const container = document.getElementById('countries');
+        countries.forEach(country => {
+          const div = document.createElement('div');
+          div.className = 'country';
           div.innerHTML = `
-            <strong>${item.country}</strong>: ${item.fact} <br>
-            <button class="approve" onclick="approveFact('${id}', '${item.country}', \`${item.fact}\`)">Approve</button>
-            <button class="reject" onclick="rejectFact('${id}')">Reject</button>
+            <img src="${country.flag}" alt="${country.name} flag">
+            <span>${country.name}</span>
           `;
-          pendingList.appendChild(div);
+          container.appendChild(div);
         });
-      });
+      } catch (error) {
+        console.error("Error loading countries.json", error);
+      }
     }
 
-    // Approve / Reject
-    window.approveFact = function(id, country, fact) {
-      const approvedRef = push(ref(db, "approvedFacts/" + country));
-      set(approvedRef, fact);
-      remove(ref(db, "pendingFacts/" + id));
-    };
-
-    window.rejectFact = function(id) {
-      remove(ref(db, "pendingFacts/" + id));
-    };
-
-    // Show facts in modal
-    window.openModal = function(country) {
-      document.getElementById("modalCountry").innerText = country;
-      const factList = document.getElementById("factList");
-      factList.innerHTML = "";
-
-      const approvedRef = ref(db, "approvedFacts/" + country);
-      get(approvedRef).then((snapshot) => {
-        if (!snapshot.exists()) {
-          factList.innerHTML = "<li>No approved facts yet.</li>";
-          return;
-        }
-        snapshot.forEach((child) => {
-          const li = document.createElement("li");
-          li.textContent = child.val();
-          factList.appendChild(li);
-        });
-      });
-
-      document.getElementById("factModal").style.display = "flex";
-    };
-
-    window.closeModal = function() {
-      document.getElementById("factModal").style.display = "none";
-    };
-
-    // Show admin panel if ?admin=true
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get("admin") === "true") {
-      document.getElementById("adminPanel").style.display = "block";
-      loadPendingFacts();
-    }
+    loadCountries();
   </script>
 </body>
 </html>
