@@ -12,6 +12,7 @@
       text-align: center;
       margin: 0;
       padding: 0;
+      transition: background 0.3s, color 0.3s;
     }
     h1 {
       margin: 20px 0;
@@ -44,13 +45,43 @@
       margin-top: 8px;
       font-size: 14px;
     }
+
+    /* 🌞 Light mode styles */
+    body.light {
+      background-color: #f5f5f5;
+      color: #000000;
+    }
+    body.light .country {
+      background: #ffffff;
+    }
+    body.light .country:hover {
+      background: #e0e0e0;
+    }
+
+    /* Toggle button */
+    #toggle-theme {
+      margin: 10px;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      background: #007BFF;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+    #toggle-theme:hover {
+      background: #0056b3;
+    }
   </style>
 </head>
 <body>
+  <button id="toggle-theme">🌙 Dark Mode</button>
   <h1>🌍 Country Flags</h1>
   <div id="countries"></div>
 
   <script>
+    // 🌍 Load countries dynamically
     async function loadCountries() {
       try {
         const response = await fetch("countries.json");
@@ -68,7 +99,6 @@
             <div class="country-name">${country.name}</div>
           `;
 
-          // Click handler (later for facts)
           div.addEventListener("click", () => {
             alert("Facts about " + country.name + " will go here!");
           });
@@ -81,6 +111,17 @@
     }
 
     loadCountries();
+
+    // 🌙 Dark / Light mode toggle
+    const toggleButton = document.getElementById("toggle-theme");
+    toggleButton.addEventListener("click", () => {
+      document.body.classList.toggle("light");
+      if (document.body.classList.contains("light")) {
+        toggleButton.textContent = "🌙 Dark Mode";
+      } else {
+        toggleButton.textContent = "☀️ Light Mode";
+      }
+    });
   </script>
 </body>
 </html>
