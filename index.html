@@ -3,91 +3,71 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Country Flags Website</title>
+  <title>Country Flags</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #121212;
-      color: #ffffff;
-      text-align: center;
+      background: #121212;
+      color: #f0f0f0;
       margin: 0;
-      padding: 0;
-      transition: background 0.3s, color 0.3s;
+      padding: 20px;
     }
     h1 {
-      margin: 20px 0;
+      text-align: center;
     }
-    #countries {
+    #search {
+      display: block;
+      width: 100%;
+      max-width: 400px;
+      margin: 10px auto 20px auto;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #333;
+      background: #1e1e1e;
+      color: #f0f0f0;
+    }
+    .countries {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
       gap: 15px;
-      padding: 20px;
-      max-width: 1400px;
-      margin: auto;
     }
     .country {
       background: #1e1e1e;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      text-align: center;
       padding: 10px;
-      border-radius: 8px;
-      transition: transform 0.2s, background 0.2s;
-      cursor: pointer;
+      transition: transform 0.2s;
     }
     .country:hover {
-      background: #333;
       transform: scale(1.05);
     }
     .country img {
       width: 80px;
-      height: auto;
-      border-radius: 4px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 5px;
     }
     .country-name {
       margin-top: 8px;
-      font-size: 14px;
-    }
-    body.light {
-      background-color: #f5f5f5;
-      color: #000000;
-    }
-    body.light .country {
-      background: #ffffff;
-    }
-    body.light .country:hover {
-      background: #e0e0e0;
-    }
-    #toggle-theme {
-      margin: 10px;
-      padding: 8px 15px;
-      border: none;
-      border-radius: 5px;
-      background: #007BFF;
-      color: white;
-      cursor: pointer;
-      font-size: 14px;
-      transition: background 0.2s;
-    }
-    #toggle-theme:hover {
-      background: #0056b3;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <button id="toggle-theme">🌙 Dark Mode</button>
-  <h1>🌍 Country Flags</h1>
-  <div id="countries"></div>
+  <h1>Country Flags</h1>
+  <input type="text" id="search" placeholder="Search country...">
+
+  <div class="countries" id="countries-container"></div>
 
   <script>
-    // Path to local SVG folder
-    const FLAG_PATH = "country-flags-main/svg/";
-
-    // Full list of countries with ISO 3166-1 alpha-2 codes
     const countries = [
       { name: "Afghanistan", code: "af" },
       { name: "Albania", code: "al" },
       { name: "Algeria", code: "dz" },
       { name: "Andorra", code: "ad" },
       { name: "Angola", code: "ao" },
-      { name: "Antigua and Barbuda", code: "ag" },
       { name: "Argentina", code: "ar" },
       { name: "Armenia", code: "am" },
       { name: "Australia", code: "au" },
@@ -120,13 +100,12 @@
       { name: "China", code: "cn" },
       { name: "Colombia", code: "co" },
       { name: "Comoros", code: "km" },
-      { name: "Congo (Brazzaville)", code: "cg" },
-      { name: "Congo (Kinshasa)", code: "cd" },
+      { name: "Congo", code: "cg" },
       { name: "Costa Rica", code: "cr" },
       { name: "Croatia", code: "hr" },
       { name: "Cuba", code: "cu" },
       { name: "Cyprus", code: "cy" },
-      { name: "Czech Republic", code: "cz" },
+      { name: "Czechia", code: "cz" },
       { name: "Denmark", code: "dk" },
       { name: "Djibouti", code: "dj" },
       { name: "Dominica", code: "dm" },
@@ -134,8 +113,6 @@
       { name: "Ecuador", code: "ec" },
       { name: "Egypt", code: "eg" },
       { name: "El Salvador", code: "sv" },
-      { name: "Equatorial Guinea", code: "gq" },
-      { name: "Eritrea", code: "er" },
       { name: "Estonia", code: "ee" },
       { name: "Eswatini", code: "sz" },
       { name: "Ethiopia", code: "et" },
@@ -148,6 +125,7 @@
       { name: "Germany", code: "de" },
       { name: "Ghana", code: "gh" },
       { name: "Greece", code: "gr" },
+      { name: "Greenland", code: "gl" },
       { name: "Grenada", code: "gd" },
       { name: "Guatemala", code: "gt" },
       { name: "Guinea", code: "gn" },
@@ -191,7 +169,6 @@
       { name: "Mauritania", code: "mr" },
       { name: "Mauritius", code: "mu" },
       { name: "Mexico", code: "mx" },
-      { name: "Micronesia", code: "fm" },
       { name: "Moldova", code: "md" },
       { name: "Monaco", code: "mc" },
       { name: "Mongolia", code: "mn" },
@@ -230,7 +207,6 @@
       { name: "Saint Vincent and the Grenadines", code: "vc" },
       { name: "Samoa", code: "ws" },
       { name: "San Marino", code: "sm" },
-      { name: "Sao Tome and Principe", code: "st" },
       { name: "Saudi Arabia", code: "sa" },
       { name: "Senegal", code: "sn" },
       { name: "Serbia", code: "rs" },
@@ -279,35 +255,30 @@
       { name: "Zimbabwe", code: "zw" }
     ];
 
-    function loadCountries() {
-      const container = document.getElementById("countries");
-      container.innerHTML = "";
+    const container = document.getElementById('countries-container');
+    const searchInput = document.getElementById('search');
 
-      countries.forEach(country => {
-        const div = document.createElement("div");
-        div.className = "country";
+    function displayCountries(list) {
+      container.innerHTML = '';
+      list.forEach(country => {
+        const div = document.createElement('div');
+        div.className = 'country';
         div.innerHTML = `
-          <img src="${FLAG_PATH}${country.code}.svg" alt="${country.name} flag">
+          <img src="country-flags-main/svg/${country.code}.svg" alt="${country.name}">
           <div class="country-name">${country.name}</div>
         `;
-        div.addEventListener("click", () => {
-          alert("Facts about " + country.name + " will go here!");
-        });
         container.appendChild(div);
       });
     }
 
-    loadCountries();
+    // Initial display
+    displayCountries(countries);
 
-    // 🌙 Dark / Light mode toggle
-    const toggleButton = document.getElementById("toggle-theme");
-    toggleButton.addEventListener("click", () => {
-      document.body.classList.toggle("light");
-      if (document.body.classList.contains("light")) {
-        toggleButton.textContent = "🌙 Dark Mode";
-      } else {
-        toggleButton.textContent = "☀️ Light Mode";
-      }
+    // Search functionality
+    searchInput.addEventListener('input', () => {
+      const searchTerm = searchInput.value.toLowerCase();
+      const filtered = countries.filter(c => c.name.toLowerCase().includes(searchTerm));
+      displayCountries(filtered);
     });
   </script>
 </body>
